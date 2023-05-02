@@ -1,0 +1,6 @@
+{
+    "tasks": {
+        "start": "deno run -A --unstable mod.ts",
+        "install": "deno install --unstable -Arn dnrm mod.ts"
+    }
+}
