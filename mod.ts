@@ -48,7 +48,7 @@ if (import.meta.main) {
   await new Command()
     .name("dnrm")
     .version("0.0.1")
-    .description("快速切换 npm 源")
+    .description("类似 nrm，但是速度超级无敌快")
     .type("optionalRegistrys", optionalRegistrys)
     .arguments("[registry:optionalRegistrys]")
     .action(async (_, newRegistry) => {
