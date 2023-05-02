@@ -57,7 +57,7 @@ if (import.meta.main) {
       const { registry } = await getNpmUserConfig(configPath);
       const currentRegistry = normalizeRegistry(registry);
       if (!newRegistry || newRegistry === currentRegistry) {
-        console.log(`当前源为 %c${currentRegistry}`, "color: green");
+        console.log(`%c${currentRegistry}`, "color: green");
         return;
       }
       const configText = await Deno.readTextFile(configPath);
@@ -71,7 +71,7 @@ if (import.meta.main) {
 
       await Deno.writeTextFile(configPath, newConfigText);
 
-      console.log(`√ 成功切换 %c${newRegistry}`, `color: green`);
+      console.log(`√ %c${newRegistry}`, `color: green`);
     })
     .parse(Deno.args);
 }
