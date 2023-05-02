@@ -1,8 +1,11 @@
-import { load } from 'https://deno.land/std@0.185.0/dotenv/mod.ts';
-import { ensureFile } from 'https://deno.land/std@0.185.0/fs/ensure_file.ts';
-import { Command, EnumType } from 'https://deno.land/x/cliffy@v0.25.7/command/mod.ts';
+import { load } from "https://deno.land/std@0.185.0/dotenv/mod.ts";
+import { ensureFile } from "https://deno.land/std@0.185.0/fs/ensure_file.ts";
+import {
+  Command,
+  EnumType,
+} from "https://deno.land/x/cliffy@v0.25.7/command/mod.ts";
 
-import { execaWithThermal } from './src/process.ts';
+import { execaWithThermal } from "./src/process.ts";
 
 interface Registrys {
   [k: string]: string;
