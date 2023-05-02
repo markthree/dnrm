@@ -45,22 +45,33 @@ function normalizeRegistry(registry: string) {
 
 if (import.meta.main) {
   const optionalRegistrys = new EnumType(Object.keys(registrys));
-
   await new Command()
     .name("dnrm")
     .version("0.0.1")
     .description("快速切换 npm 源")
     .type("optionalRegistrys", optionalRegistrys)
     .arguments("[registry:optionalRegistrys]")
-    .action(async (_, _registry) => {
+    .action(async (_, newRegistry) => {
+      console.log();
       const configPath = await getNpmUserConfigPath();
       const { registry } = await getNpmUserConfig(configPath);
       const currentRegistry = normalizeRegistry(registry);
-      if (!_registry || _registry === currentRegistry) {
-        console.log()
+      if (!newRegistry || newRegistry === currentRegistry) {
         console.log(`当前源为 %c${currentRegistry}`, "color: green");
         return;
       }
+      const configText = await Deno.readTextFile(configPath);
+      const registryValue = `registry=${registrys[newRegistry]}`;
+      let newConfigText: string;
+      if (!currentRegistry) {
+        newConfigText = configText + registryValue;
+      } else {
+        newConfigText = configText.replace(/registry=.*/, registryValue);
+      }
+
+      await Deno.writeTextFile(configPath, newConfigText);
+
+      console.log(`√ 成功切换 %c${newRegistry}`, `color: green`);
     })
     .parse(Deno.args);
 }
