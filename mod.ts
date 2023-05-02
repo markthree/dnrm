@@ -4,6 +4,7 @@ import {
   Command,
   EnumType,
 } from "https://deno.land/x/cliffy@v0.25.7/command/mod.ts";
+import { ensureFile } from "https://deno.land/std@0.185.0/fs/ensure_file.ts";
 
 interface Registrys {
   [k: string]: string;
@@ -60,6 +61,8 @@ if (import.meta.main) {
         console.log(`%c${currentRegistry}`, "color: green");
         return;
       }
+
+      await ensureFile(configPath);
       const configText = await Deno.readTextFile(configPath);
       const registryValue = `registry=${registrys[newRegistry]}`;
       let newConfigText: string;
