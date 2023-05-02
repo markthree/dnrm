@@ -56,6 +56,7 @@ if (import.meta.main) {
     .action(async (_, newRegistry) => {
       console.log();
       const configPath = await getNpmUserConfigPath();
+      await ensureFile(configPath);
       const { registry } = await getNpmUserConfig(configPath);
       const currentRegistry = normalizeRegistry(registry);
       if (!newRegistry || newRegistry === currentRegistry) {
@@ -63,7 +64,6 @@ if (import.meta.main) {
         return;
       }
 
-      await ensureFile(configPath);
       const configText = await Deno.readTextFile(configPath);
       const registryValue = `registry=${registrys[newRegistry]}`;
       let newConfigText: string;
