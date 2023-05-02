@@ -1,6 +1,6 @@
-import { useThermalFn } from "./kv.ts"
-import { which as _which } from "https://deno.land/x/which@0.3.0/mod.ts";
+import { which as _which } from 'https://deno.land/x/which@0.3.0/mod.ts';
 
+import { useThermalFn } from './kv.ts';
 
 const which = useThermalFn((command: string) => _which(command))
 

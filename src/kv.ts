@@ -1,4 +1,4 @@
-import { AnyFunction } from "https://deno.land/x/mtype@v0.2.9/mod.ts";
+import type { AnyFunction } from "https://deno.land/x/mtype@v0.2.9/mod.ts";
 
 let kv: Deno.Kv;
 export function useThermalFn<T extends AnyFunction>(
