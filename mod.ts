@@ -1,4 +1,4 @@
-import { green } from "https://deno.land/std@0.170.0/fmt/colors.ts";
+import { brightGreen } from "https://deno.land/std@0.170.0/fmt/colors.ts";
 import { ensureFile } from "https://deno.land/std@0.185.0/fs/mod.ts";
 import {
   Command,
@@ -74,7 +74,7 @@ if (import.meta.main) {
     .action(async () => {
       const { currentRegistry } = await prepare();
       console.log(
-        `\n ${green(`${currentRegistry} -> ${registrys[currentRegistry]}`)}`,
+        `\n ${brightGreen(`${currentRegistry} -> ${registrys[currentRegistry]}`)}`,
       );
     })
     .command("ls", ls)

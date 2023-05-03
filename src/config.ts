@@ -32,12 +32,10 @@ export async function getNpmUserConfigPath(local = false) {
   return configPath.trim();
 }
 
-export async function getNpmUserConfig(configPath: string) {
-  const config = await load({
+export function getNpmUserConfig(configPath: string) {
+  return load({
     envPath: configPath,
   });
-
-  return config;
 }
 
 export async function getCurrentRegistry(configPath: string) {
