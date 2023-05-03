@@ -69,7 +69,7 @@ if (import.meta.main) {
   const optionalRegistrys = new EnumType(optionalRegistryKeys);
   await new Command()
     .name("dnrm")
-    .version("0.1.0")
+    .version("0.1.1")
     .description("类似 nrm，但是速度超级无敌快")
     .usage(`[${optionalRegistryKeys.join("|")}]`)
     .type("optionalRegistrys", optionalRegistrys)
