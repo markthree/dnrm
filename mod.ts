@@ -1,85 +1,20 @@
-import { gray, green } from "https://deno.land/std@0.170.0/fmt/colors.ts";
-import { load } from "https://deno.land/std@0.185.0/dotenv/mod.ts";
-import { ensureFile, exists } from "https://deno.land/std@0.185.0/fs/mod.ts";
-import { resolve } from "https://deno.land/std@0.185.0/path/mod.ts";
+import { green } from "https://deno.land/std@0.170.0/fmt/colors.ts";
+import { ensureFile } from "https://deno.land/std@0.185.0/fs/mod.ts";
 import {
   Command,
   EnumType,
 } from "https://deno.land/x/cliffy@v0.25.7/command/mod.ts";
-import { homedir } from "node:os";
 
-import { execa, execaWithThermal } from "./src/process.ts";
-
-const CONFIG_NAME = ".npmrc";
-
-interface Registrys {
-  [k: string]: string;
-}
-
-export const registrys: Registrys = {
-  npm: "https://registry.npmjs.org/",
-  yarn: "https://registry.yarnpkg.com/",
-  github: "https://npm.pkg.github.com/",
-  taobao: "https://registry.npmmirror.com/",
-  npmMirror: "https://skimdb.npmjs.com/registry/",
-  tencent: "https://mirrors.cloud.tencent.com/npm/",
-};
-
-export async function getNpmUserConfigPath(local = false) {
-  const nearestConfigPath = resolve(Deno.cwd(), CONFIG_NAME);
-  if (local || await exists(nearestConfigPath)) {
-    return nearestConfigPath;
-  }
-  const configPath = await execaWithThermal("npm", [
-    "config",
-    "get",
-    "userconfig",
-  ]);
-
-  if (!configPath) {
-    const globalConfigPath = resolve(homedir(), CONFIG_NAME);
-    await execa("npm", [
-      "config",
-      "set",
-      `userconfig=${globalConfigPath}`,
-    ]);
-    return globalConfigPath;
-  }
-
-  return configPath.trim();
-}
-
-export async function getNpmUserConfig(configPath: string) {
-  const config = await load({
-    envPath: configPath,
-  });
-
-  return config;
-}
-
-export function listRegistrys(currentRegistry: string) {
-  const list = Object.entries(registrys).map(([k, v]) => {
-    if (currentRegistry === k || currentRegistry === v) {
-      return `\n ${green(`${k} → ${v}`)}`;
-    }
-    return `\n ${k}${gray(` → ${v}`)}`;
-  });
-
-  return list.join("");
-}
-
-export async function getCurrentRegistry(configPath: string) {
-  const { registry } = await getNpmUserConfig(configPath);
-  for (const k in registrys) {
-    if (Object.prototype.hasOwnProperty.call(registrys, k)) {
-      const v = registrys[k];
-      if (v === registry) {
-        return k;
-      }
-    }
-  }
-  return registry;
-}
+import {
+  CONFIG_NAME,
+  getCurrentRegistry,
+  getNpmUserConfigPath,
+} from "./src/config.ts";
+import {
+  listRegistrys,
+  listRegistrysWithNetworkDelay,
+  registrys,
+} from "./src/registrys.ts";
 
 async function prepare(local?: boolean) {
   const configPath = await getNpmUserConfigPath(local);
@@ -92,25 +27,30 @@ if (import.meta.main) {
   const optionalRegistryKeys = Object.keys(registrys);
   const optionalRegistrys = new EnumType(optionalRegistryKeys);
 
+  const ls = new Command().description("列出源").action(async () => {
+    const { currentRegistry } = await prepare();
+    console.log(listRegistrys(currentRegistry));
+  });
+
+  const test = new Command().description("测试源").action(async () => {
+    const { currentRegistry } = await prepare();
+    console.log(await listRegistrysWithNetworkDelay(currentRegistry));
+  });
+
   const use = new Command()
-    .description(`使用新源`)
+    .description(`使用源`)
     .usage(`[${optionalRegistryKeys.join("|")}]`)
     .type("optionalRegistrys", optionalRegistrys)
-    .arguments("<newRegistry>:optionalRegistrys]").option(
+    .arguments("<registry>:optionalRegistrys]").option(
       "-l, --local",
       `设置 ${CONFIG_NAME} 在本地`,
     ).action(
       async ({ local }, newRegistry) => {
-        const {
-          configPath,
-          currentRegistry,
-        } = await prepare(local);
-
-        if (!newRegistry || newRegistry === currentRegistry) {
+        const { configPath, currentRegistry } = await prepare(local);
+        if (newRegistry === currentRegistry) {
           console.log(listRegistrys(currentRegistry));
           return;
         }
-
         const configText = await Deno.readTextFile(configPath);
         const registryValue = `registry=${registrys[newRegistry as string]}`;
         let newConfigText: string;
@@ -126,11 +66,6 @@ if (import.meta.main) {
       },
     );
 
-  const ls = new Command().description("列出所有源").action(async () => {
-    const { currentRegistry } = await prepare();
-    console.log(listRegistrys(currentRegistry));
-  });
-
   await new Command()
     .usage("[ls|use]")
     .name("dnrm")
@@ -143,6 +78,7 @@ if (import.meta.main) {
       );
     })
     .command("ls", ls)
+    .command("test", test)
     .command("use", use)
     .parse(Deno.args);
 }

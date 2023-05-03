@@ -28,6 +28,9 @@ dnrm use taobao
 # 查看所有源
 dnrm ls
 
+# 测试所有源
+dnrm test
+
 # 设置源在本地
 dnrm use taobao --local
 
