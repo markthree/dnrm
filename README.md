@@ -27,6 +27,15 @@ dnrm cnpm
 
 # 切换 npm 源
 dnrm npm
+
+# 本地
+dnrm npm --local
+
+# 查看帮助
+dnrm -h
+
+# 查看版本号
+dnrm -v
 ```
 
 <br />
