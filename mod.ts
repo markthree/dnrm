@@ -69,7 +69,7 @@ if (import.meta.main) {
   await new Command()
     .usage("[ls|use]")
     .name("dnrm")
-    .version("0.3.0")
+    .version("0.3.1")
     .description("类似 nrm，但是速度超级无敌快")
     .action(async () => {
       const { currentRegistry } = await prepare();
