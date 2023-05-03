@@ -5,8 +5,11 @@ import {
   Command,
   EnumType,
 } from "https://deno.land/x/cliffy@v0.25.7/command/mod.ts";
+import { homedir } from "node:os";
 
-import { execaWithThermal } from "./src/process.ts";
+import { execa, execaWithThermal } from "./src/process.ts";
+
+const CONFIG_NAME = ".npmrc";
 
 interface Registrys {
   [k: string]: string;
@@ -18,7 +21,7 @@ export const registrys: Registrys = {
 };
 
 export async function getNpmUserConfigPath(local = false) {
-  const nearestConfigPath = resolve(Deno.cwd(), ".npmrc");
+  const nearestConfigPath = resolve(Deno.cwd(), CONFIG_NAME);
   if (local || await exists(nearestConfigPath)) {
     return nearestConfigPath;
   }
@@ -27,6 +30,16 @@ export async function getNpmUserConfigPath(local = false) {
     "get",
     "userconfig",
   ]);
+
+  if (!configPath) {
+    const globalConfigPath = resolve(homedir(), CONFIG_NAME);
+    await execa("npm", [
+      "config",
+      "set",
+      `userconfig=${globalConfigPath}`,
+    ]);
+    return globalConfigPath;
+  }
 
   return configPath.trim();
 }
@@ -52,13 +65,13 @@ function normalizeRegistry(registry: string) {
 }
 
 if (import.meta.main) {
-  const optionalRegistryKeys = Object.keys(registrys)
+  const optionalRegistryKeys = Object.keys(registrys);
   const optionalRegistrys = new EnumType(optionalRegistryKeys);
   await new Command()
     .name("dnrm")
     .version("0.1.0")
     .description("类似 nrm，但是速度超级无敌快")
-    .usage(`[${optionalRegistryKeys.join('|')}]`)
+    .usage(`[${optionalRegistryKeys.join("|")}]`)
     .type("optionalRegistrys", optionalRegistrys)
     .option("-l, --local", "本地项目下生效")
     .arguments("[registry:optionalRegistrys]")
