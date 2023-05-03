@@ -1,3 +1,4 @@
+import { gray, green } from "https://deno.land/std@0.170.0/fmt/colors.ts";
 import { load } from "https://deno.land/std@0.185.0/dotenv/mod.ts";
 import { ensureFile, exists } from "https://deno.land/std@0.185.0/fs/mod.ts";
 import { resolve } from "https://deno.land/std@0.185.0/path/mod.ts";
@@ -17,7 +18,11 @@ interface Registrys {
 
 export const registrys: Registrys = {
   npm: "https://registry.npmjs.org/",
-  cnpm: "https://registry.npmmirror.com/",
+  yarn: "https://registry.yarnpkg.com/",
+  github: "https://npm.pkg.github.com/",
+  taobao: "https://registry.npmmirror.com/",
+  npmMirror: "https://skimdb.npmjs.com/registry/",
+  tencent: "https://mirrors.cloud.tencent.com/npm/",
 };
 
 export async function getNpmUserConfigPath(local = false) {
@@ -52,7 +57,19 @@ export async function getNpmUserConfig(configPath: string) {
   return config;
 }
 
-function normalizeRegistry(registry: string) {
+export function listRegistrys(currentRegistry: string) {
+  const list = Object.entries(registrys).map(([k, v]) => {
+    if (currentRegistry === k || currentRegistry === v) {
+      return `\n ${green(`${k} → ${v}`)}`;
+    }
+    return `\n ${k}${gray(` → ${v}`)}`;
+  });
+
+  return list.join("");
+}
+
+export async function getCurrentRegistry(configPath: string) {
+  const { registry } = await getNpmUserConfig(configPath);
   for (const k in registrys) {
     if (Object.prototype.hasOwnProperty.call(registrys, k)) {
       const v = registrys[k];
@@ -64,40 +81,68 @@ function normalizeRegistry(registry: string) {
   return registry;
 }
 
+async function prepare(local?: boolean) {
+  const configPath = await getNpmUserConfigPath(local);
+  await ensureFile(configPath);
+  const currentRegistry = await getCurrentRegistry(configPath);
+  return { configPath, currentRegistry };
+}
+
 if (import.meta.main) {
   const optionalRegistryKeys = Object.keys(registrys);
   const optionalRegistrys = new EnumType(optionalRegistryKeys);
-  await new Command()
-    .name("dnrm")
-    .version("0.1.1")
-    .description("类似 nrm，但是速度超级无敌快")
+
+  const use = new Command()
+    .description(`使用新源`)
     .usage(`[${optionalRegistryKeys.join("|")}]`)
     .type("optionalRegistrys", optionalRegistrys)
-    .option("-l, --local", "本地项目下生效")
-    .arguments("[registry:optionalRegistrys]")
-    .action(async ({ local }, newRegistry) => {
-      console.log();
-      const configPath = await getNpmUserConfigPath(local);
-      await ensureFile(configPath);
-      const { registry } = await getNpmUserConfig(configPath);
-      const currentRegistry = normalizeRegistry(registry);
-      if (!newRegistry || newRegistry === currentRegistry) {
-        console.log(`%c${currentRegistry}`, "color: green");
-        return;
-      }
+    .arguments("<newRegistry>:optionalRegistrys]").option(
+      "-l, --local",
+      `设置 ${CONFIG_NAME} 在本地`,
+    ).action(
+      async ({ local }, newRegistry) => {
+        const {
+          configPath,
+          currentRegistry,
+        } = await prepare(local);
 
-      const configText = await Deno.readTextFile(configPath);
-      const registryValue = `registry=${registrys[newRegistry]}`;
-      let newConfigText: string;
-      if (!currentRegistry) {
-        newConfigText = configText + registryValue;
-      } else {
-        newConfigText = configText.replace(/registry=.*/, registryValue);
-      }
+        if (!newRegistry || newRegistry === currentRegistry) {
+          console.log(listRegistrys(currentRegistry));
+          return;
+        }
 
-      await Deno.writeTextFile(configPath, newConfigText);
+        const configText = await Deno.readTextFile(configPath);
+        const registryValue = `registry=${registrys[newRegistry as string]}`;
+        let newConfigText: string;
+        if (!currentRegistry) {
+          newConfigText = configText + registryValue;
+        } else {
+          newConfigText = configText.replace(/registry=.*/, registryValue);
+        }
 
-      console.log(`√ %c${newRegistry}`, `color: green`);
+        await Deno.writeTextFile(configPath, newConfigText);
+
+        console.log(listRegistrys(newRegistry as string));
+      },
+    );
+
+  const ls = new Command().description("列出所有源").action(async () => {
+    const { currentRegistry } = await prepare();
+    console.log(listRegistrys(currentRegistry));
+  });
+
+  await new Command()
+    .usage("[ls|use]")
+    .name("dnrm")
+    .version("0.2.0")
+    .description("类似 nrm，但是速度超级无敌快")
+    .action(async () => {
+      const { currentRegistry } = await prepare();
+      console.log(
+        `\n ${green(`${currentRegistry} -> ${registrys[currentRegistry]}`)}`,
+      );
     })
+    .command("ls", ls)
+    .command("use", use)
     .parse(Deno.args);
 }

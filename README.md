@@ -22,20 +22,20 @@ deno task install
 # 查看当前源
 dnrm
 
-# 切换 cnpm 源
-dnrm cnpm
+# 切换 taobao 源
+dnrm use taobao
 
-# 切换 npm 源
-dnrm npm
+# 查看所有源
+dnrm ls
 
-# 本地
-dnrm npm --local
+# 设置源在本地
+dnrm use taobao --local
 
 # 查看帮助
 dnrm -h
 
 # 查看版本号
-dnrm -v
+dnrm -V
 ```
 
 <br />
