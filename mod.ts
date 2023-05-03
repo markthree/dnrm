@@ -1,5 +1,6 @@
 import { load } from "https://deno.land/std@0.185.0/dotenv/mod.ts";
-import { ensureFile } from "https://deno.land/std@0.185.0/fs/ensure_file.ts";
+import { ensureFile, exists } from "https://deno.land/std@0.185.0/fs/mod.ts";
+import { resolve } from "https://deno.land/std@0.185.0/path/mod.ts";
 import {
   Command,
   EnumType,
@@ -16,12 +17,17 @@ export const registrys: Registrys = {
   cnpm: "https://registry.npmmirror.com/",
 };
 
-export async function getNpmUserConfigPath() {
+export async function getNpmUserConfigPath(local = false) {
+  const nearestConfigPath = resolve(Deno.cwd(), ".npmrc");
+  if (local || await exists(nearestConfigPath)) {
+    return nearestConfigPath;
+  }
   const configPath = await execaWithThermal("npm", [
     "config",
     "get",
     "userconfig",
   ]);
+
   return configPath.trim();
 }
 
@@ -46,16 +52,19 @@ function normalizeRegistry(registry: string) {
 }
 
 if (import.meta.main) {
-  const optionalRegistrys = new EnumType(Object.keys(registrys));
+  const optionalRegistryKeys = Object.keys(registrys)
+  const optionalRegistrys = new EnumType(optionalRegistryKeys);
   await new Command()
     .name("dnrm")
-    .version("0.0.1")
+    .version("0.1.0")
     .description("类似 nrm，但是速度超级无敌快")
+    .usage(`[${optionalRegistryKeys.join('|')}]`)
     .type("optionalRegistrys", optionalRegistrys)
+    .option("-l, --local", "本地项目下生效")
     .arguments("[registry:optionalRegistrys]")
-    .action(async (_, newRegistry) => {
+    .action(async ({ local }, newRegistry) => {
       console.log();
-      const configPath = await getNpmUserConfigPath();
+      const configPath = await getNpmUserConfigPath(local);
       await ensureFile(configPath);
       const { registry } = await getNpmUserConfig(configPath);
       const currentRegistry = normalizeRegistry(registry);
