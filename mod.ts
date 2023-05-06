@@ -72,7 +72,7 @@ if (import.meta.main) {
   await new Command()
     .usage("[command|option]")
     .name("dnrm")
-    .version("0.3.3")
+    .version("0.3.4")
     .description("deno 实现的 nrm，每次切换源都在 200ms 内，速度超级快")
     .action(async () => {
       const { currentRegistry } = await prepare();
