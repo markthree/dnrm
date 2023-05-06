@@ -1,4 +1,3 @@
-import { parse } from "https://deno.land/std@0.185.0/dotenv/mod.ts";
 import { exists } from "https://deno.land/std@0.185.0/fs/exists.ts";
 import { resolve } from "https://deno.land/std@0.185.0/path/mod.ts";
 import { homedir } from "node:os";
@@ -31,8 +30,15 @@ export async function getUserConfigPath(local = false) {
   return configPath.trim();
 }
 
+const registryReg = /(?<=registry=).*/;
+
+function parseRegistry(text: string) {
+  const [registry] = text.match(registryReg) || [];
+  return registry ?? "npm";
+}
+
 export function getCurrentRegistry(configText: string) {
-  const { registry } = parse(configText);
+  const registry = parseRegistry(configText);
   for (const k in registrys) {
     if (Object.prototype.hasOwnProperty.call(registrys, k)) {
       const v = registrys[k];
