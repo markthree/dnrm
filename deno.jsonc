@@ -1,7 +1,7 @@
 {
     "tasks": {
         "start": "deno run -A --unstable mod.ts",
-        "install": "deno install --unstable -Arfn dnrm mod.ts"
+        "install": "deno install --unstable --allow-read --allow-write --allow-env --allow-net -rfn dnrm mod.ts"
     },
     "lint": {
        "rules": {
