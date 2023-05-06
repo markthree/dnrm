@@ -20,7 +20,7 @@ export function useThermalFn<T extends AnyFunction>(
     const keys = [...originKeys, ...rest].flat();
 
     const { value } = await kv.get(keys);
-    
+
     if (value) {
       return value as ReturnType<T>;
     }

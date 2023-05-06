@@ -74,7 +74,9 @@ if (import.meta.main) {
     .action(async () => {
       const { currentRegistry } = await prepare();
       console.log(
-        `\n ${brightGreen(`${currentRegistry} -> ${registrys[currentRegistry]}`)}`,
+        `\n ${
+          brightGreen(`${currentRegistry} -> ${registrys[currentRegistry]}`)
+        }`,
       );
     })
     .command("ls", ls)

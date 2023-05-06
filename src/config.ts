@@ -1,4 +1,4 @@
-import { load } from "https://deno.land/std@0.185.0/dotenv/mod.ts";
+import { parse } from "https://deno.land/std@0.185.0/dotenv/mod.ts";
 import { exists } from "https://deno.land/std@0.185.0/fs/mod.ts";
 import { resolve } from "https://deno.land/std@0.185.0/path/mod.ts";
 import { homedir } from "node:os";
@@ -32,10 +32,9 @@ export async function getNpmUserConfigPath(local = false) {
   return configPath.trim();
 }
 
-export function getNpmUserConfig(configPath: string) {
-  return load({
-    envPath: configPath,
-  });
+export async function getNpmUserConfig(configPath: string) {
+  const configText = await Deno.readTextFile(configPath);
+  return parse(configText);
 }
 
 export async function getCurrentRegistry(configPath: string) {

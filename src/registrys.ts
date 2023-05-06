@@ -1,8 +1,8 @@
 import {
   brightGreen,
+  brightRed,
   dim,
   gray,
-  brightRed,
   yellow,
 } from "https://deno.land/std@0.170.0/fmt/colors.ts";
 
@@ -53,7 +53,9 @@ export async function listRegistrysWithNetworkDelay(
         }
         const finalDelay = (Date.now() - start) / 1000;
         delayText = `${finalDelay.toFixed(2)}s`;
-        delayText = finalDelay < 1 ? brightGreen(delayText) : dim(yellow(delayText));
+        delayText = finalDelay < 1
+          ? brightGreen(delayText)
+          : dim(yellow(delayText));
       } catch (_) {
         delayText = dim(brightRed(`> ${timeoutDlay}s`));
         controller.abort();
