@@ -1,8 +1,8 @@
-# dnrm
-
-类似 nrm，但是速度超级无敌快 
-
-<br />
+<div align="center">
+    <img width="200px" height="200px" src="./snapshot.gif" />
+    <h1>dnrm</h1>
+    <p>deno 实现的 nrm，每次切换源都在 200ms 内，速度超级快</p>
+</div>
 
 ## Usage
 
