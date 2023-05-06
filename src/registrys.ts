@@ -21,9 +21,12 @@ export const registrys: Registrys = {
   tencent: "https://mirrors.cloud.tencent.com/npm/",
 };
 
+export const registryKeys = Object.keys(registrys);
+
 export function listRegistrys(currentRegistry: string) {
-  const list = Object.entries(registrys).map(([k, v]) => {
-    if (currentRegistry === k || currentRegistry === v) {
+  const list = registryKeys.map((k) => {
+    const v = registrys[k];
+    if (currentRegistry === k) {
       return `\n ${brightGreen(`${k} → ${v}`)}`;
     }
     return `\n ${k}${gray(` → ${v}`)}`;
@@ -37,7 +40,8 @@ export async function listRegistrysWithNetworkDelay(
   timeoutDlay = 2,
 ) {
   const list = await Promise.all(
-    Object.entries(registrys).map(async ([k, v]) => {
+    registryKeys.map(async (k) => {
+      const v = registrys[k];
       let delayText: string;
       const timeoutFlag = Symbol();
       const { delay, resolve } = createDelay(timeoutDlay, timeoutFlag);
@@ -62,7 +66,7 @@ export async function listRegistrysWithNetworkDelay(
       } finally {
         resolve();
       }
-      if (currentRegistry === k || currentRegistry === v) {
+      if (currentRegistry === k) {
         return `\n ${brightGreen(`${k} → ${v}`)} ${delayText}`;
       }
       return `\n ${k}${gray(` → ${v}`)} ${delayText}`;

@@ -3,7 +3,7 @@ import { resolve } from "https://deno.land/std@0.185.0/path/mod.ts";
 import { homedir } from "node:os";
 
 import { execa, execaWithThermal } from "./process.ts";
-import { registrys } from "./registrys.ts";
+import { registryKeys, registrys } from "./registrys.ts";
 
 export const CONFIG_NAME = ".npmrc";
 
@@ -39,13 +39,8 @@ function parseRegistry(text: string) {
 
 export function getCurrentRegistry(configText: string) {
   const registry = parseRegistry(configText);
-  for (const k in registrys) {
-    if (Object.prototype.hasOwnProperty.call(registrys, k)) {
-      const v = registrys[k];
-      if (v === registry) {
-        return k;
-      }
-    }
-  }
-  return registry;
+  return registryKeys.find((k) => {
+    const v = registrys[k];
+    return v === registry;
+  }) ?? registry;
 }

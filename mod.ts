@@ -13,6 +13,7 @@ import {
 import {
   listRegistrys,
   listRegistrysWithNetworkDelay,
+  registryKeys,
   registrys,
 } from "./src/registrys.ts";
 
@@ -25,8 +26,7 @@ async function prepare(local?: boolean) {
 }
 
 if (import.meta.main) {
-  const optionalRegistryKeys = Object.keys(registrys);
-  const optionalRegistry = new EnumType(optionalRegistryKeys);
+  const optionalRegistry = new EnumType(registryKeys);
 
   const ls = new Command().description("列出源").action(async () => {
     const { currentRegistry } = await prepare();
@@ -40,7 +40,7 @@ if (import.meta.main) {
 
   const use = new Command()
     .description(`使用源`)
-    .usage(`[${optionalRegistryKeys.join("|")}]`)
+    .usage(`[${registryKeys.join("|")}]`)
     .type("optionalRegistry", optionalRegistry)
     .arguments("<registry:optionalRegistry>").option(
       "-l, --local",
