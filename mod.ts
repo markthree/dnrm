@@ -29,12 +29,12 @@ if (import.meta.main) {
 
   const ls = new Command().description("列出源").action(async () => {
     const { currentRegistry } = await prepare();
-    console.log(listRegistrys(currentRegistry));
+    console.log(listRegistrys(currentRegistry) + "\n");
   });
 
   const test = new Command().description("测试源").action(async () => {
     const { currentRegistry } = await prepare();
-    console.log(await listRegistrysWithNetworkDelay(currentRegistry));
+    console.log(await listRegistrysWithNetworkDelay(currentRegistry) + "\n");
   });
 
   const use = new Command()
@@ -48,7 +48,7 @@ if (import.meta.main) {
       async ({ local }, newRegistry) => {
         const { configPath, currentRegistry } = await prepare(local);
         if (newRegistry === currentRegistry) {
-          console.log(listRegistrys(currentRegistry));
+          console.log(listRegistrys(currentRegistry) + "\n");
           return;
         }
         const configText = await Deno.readTextFile(configPath);
@@ -62,7 +62,7 @@ if (import.meta.main) {
 
         await Deno.writeTextFile(configPath, newConfigText);
 
-        console.log(listRegistrys(newRegistry as string));
+        console.log(listRegistrys(newRegistry as string) + "\n");
       },
     );
 
@@ -76,7 +76,7 @@ if (import.meta.main) {
       console.log(
         `\n ${
           brightGreen(`${currentRegistry} -> ${registrys[currentRegistry]}`)
-        }`,
+        }\n`,
       );
     })
     .command("ls", ls)
