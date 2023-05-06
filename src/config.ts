@@ -8,10 +8,9 @@ import { registrys } from "./registrys.ts";
 
 export const CONFIG_NAME = ".npmrc";
 
-export async function getNpmUserConfigPath(local = false) {
-  const nearestConfigPath = resolve(Deno.cwd(), CONFIG_NAME);
-  if (local || await exists(nearestConfigPath)) {
-    return nearestConfigPath;
+export async function getUserConfigPath(local = false) {
+  if (local || await exists(CONFIG_NAME)) {
+    return CONFIG_NAME;
   }
   const configPath = await execaWithThermal("npm", [
     "config",
@@ -32,13 +31,8 @@ export async function getNpmUserConfigPath(local = false) {
   return configPath.trim();
 }
 
-export async function getNpmUserConfig(configPath: string) {
-  const configText = await Deno.readTextFile(configPath);
-  return parse(configText);
-}
-
-export async function getCurrentRegistry(configPath: string) {
-  const { registry } = await getNpmUserConfig(configPath);
+export function getCurrentRegistry(configText: string) {
+  const { registry } = parse(configText);
   for (const k in registrys) {
     if (Object.prototype.hasOwnProperty.call(registrys, k)) {
       const v = registrys[k];

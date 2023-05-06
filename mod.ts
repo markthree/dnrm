@@ -8,7 +8,7 @@ import {
 import {
   CONFIG_NAME,
   getCurrentRegistry,
-  getNpmUserConfigPath,
+  getUserConfigPath,
 } from "./src/config.ts";
 import {
   listRegistrys,
@@ -17,15 +17,16 @@ import {
 } from "./src/registrys.ts";
 
 async function prepare(local?: boolean) {
-  const configPath = await getNpmUserConfigPath(local);
+  const configPath = await getUserConfigPath(local);
   await ensureFile(configPath);
-  const currentRegistry = await getCurrentRegistry(configPath);
-  return { configPath, currentRegistry };
+  const configText = await Deno.readTextFile(configPath);
+  const currentRegistry = getCurrentRegistry(configText);
+  return { configPath, currentRegistry, configText };
 }
 
 if (import.meta.main) {
   const optionalRegistryKeys = Object.keys(registrys);
-  const optionalRegistrys = new EnumType(optionalRegistryKeys);
+  const optionalRegistry = new EnumType(optionalRegistryKeys);
 
   const ls = new Command().description("列出源").action(async () => {
     const { currentRegistry } = await prepare();
@@ -40,34 +41,36 @@ if (import.meta.main) {
   const use = new Command()
     .description(`使用源`)
     .usage(`[${optionalRegistryKeys.join("|")}]`)
-    .type("optionalRegistrys", optionalRegistrys)
-    .arguments("<registry>:optionalRegistrys]").option(
+    .type("optionalRegistry", optionalRegistry)
+    .arguments("<registry:optionalRegistry>").option(
       "-l, --local",
       `设置 ${CONFIG_NAME} 在本地`,
     ).action(
       async ({ local }, newRegistry) => {
-        const { configPath, currentRegistry } = await prepare(local);
+        const {
+          configPath,
+          configText,
+          currentRegistry,
+        } = await prepare(local);
+
         if (newRegistry === currentRegistry) {
           console.log(listRegistrys(currentRegistry) + "\n");
           return;
         }
-        const configText = await Deno.readTextFile(configPath);
-        const registryValue = `registry=${registrys[newRegistry as string]}`;
+        const registryValue = `registry=${registrys[newRegistry]}`;
         let newConfigText: string;
         if (!currentRegistry) {
           newConfigText = configText + registryValue;
         } else {
           newConfigText = configText.replace(/registry=.*/, registryValue);
         }
-
         await Deno.writeTextFile(configPath, newConfigText);
-
-        console.log(listRegistrys(newRegistry as string) + "\n");
+        console.log(listRegistrys(newRegistry) + "\n");
       },
     );
 
   await new Command()
-    .usage("[ls|use]")
+    .usage("[command|option]")
     .name("dnrm")
     .version("0.3.3")
     .description("deno 实现的 nrm，每次切换源都在 200ms 内，速度超级快")
