@@ -30,7 +30,7 @@ export async function getUserConfigPath(local = false) {
   return configPath.trim();
 }
 
-const registryReg = /(?<=registry=).*/;
+export const registryReg = /(?<=registry=).*/;
 
 function parseRegistry(text: string) {
   const [registry] = text.match(registryReg) || [];

@@ -9,6 +9,7 @@ import {
   CONFIG_NAME,
   getCurrentRegistry,
   getUserConfigPath,
+  registryReg,
 } from "./src/config.ts";
 import {
   listRegistrys,
@@ -57,12 +58,12 @@ if (import.meta.main) {
           console.log(listRegistrys(currentRegistry) + "\n");
           return;
         }
-        const registryValue = `registry=${registrys[newRegistry]}`;
         let newConfigText: string;
-        if (!currentRegistry) {
-          newConfigText = configText + registryValue;
+        const registryValue = registrys[newRegistry];
+        if (!registryReg.test(configText)) {
+          newConfigText = configText + `registry=${registryValue}`;
         } else {
-          newConfigText = configText.replace(/registry=.*/, registryValue);
+          newConfigText = configText.replace(registryReg, registryValue);
         }
         await Deno.writeTextFile(configPath, newConfigText);
         console.log(listRegistrys(newRegistry) + "\n");
