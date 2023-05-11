@@ -1,3 +1,4 @@
+import { ensureFile } from "https://deno.land/std@0.186.0/fs/ensure_file.ts";
 import { exists } from "https://deno.land/std@0.186.0/fs/exists.ts";
 import { resolve } from "https://deno.land/std@0.186.0/path/mod.ts";
 import { homedir } from "node:os";
@@ -23,4 +24,12 @@ function parseRegistry(text: string) {
 export function getCurrentRegistry(configText: string) {
   const registry = parseRegistry(configText);
   return registryKeys.find((k) => registrys[k] === registry) ?? registry;
+}
+
+export async function getConfig(local?: boolean) {
+  const configPath = await getUserConfigPath(local);
+  await ensureFile(configPath);
+  const configText = await Deno.readTextFile(configPath);
+  const currentRegistry = getCurrentRegistry(configText);
+  return { configPath, currentRegistry, configText };
 }

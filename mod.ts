@@ -1,41 +1,27 @@
-import { brightGreen } from "https://deno.land/std@0.186.0/fmt/colors.ts";
-import { ensureFile } from "https://deno.land/std@0.186.0/fs/ensure_file.ts";
 import {
   Command,
   EnumType,
 } from "https://deno.land/x/cliffy@v0.25.7/command/mod.ts";
 
+import { getConfig, registryReg } from "./src/config.ts";
 import {
-  getCurrentRegistry,
-  getUserConfigPath,
-  registryReg,
-} from "./src/config.ts";
-import {
-  listRegistrys,
-  listRegistrysWithNetworkDelay,
-  registryKeys,
-  registrys,
-} from "./src/registrys.ts";
-
-async function prepare(local?: boolean) {
-  const configPath = await getUserConfigPath(local);
-  await ensureFile(configPath);
-  const configText = await Deno.readTextFile(configPath);
-  const currentRegistry = getCurrentRegistry(configText);
-  return { configPath, currentRegistry, configText };
-}
+  printCurrentRegistry,
+  printListRegistrys,
+  printListRegistrysWithNetworkDelay,
+} from "./src/print.ts";
+import { registryKeys, registrys } from "./src/registrys.ts";
 
 if (import.meta.main) {
   const optionalRegistry = new EnumType(registryKeys);
 
   const ls = new Command().description("列出源").action(async () => {
-    const { currentRegistry } = await prepare();
-    console.log(listRegistrys(currentRegistry) + "\n");
+    const { currentRegistry } = await getConfig();
+    printListRegistrys(currentRegistry);
   });
 
   const test = new Command().description("测试源").action(async () => {
-    const { currentRegistry } = await prepare();
-    console.log(await listRegistrysWithNetworkDelay(currentRegistry) + "\n");
+    const { currentRegistry } = await getConfig();
+    await printListRegistrysWithNetworkDelay(currentRegistry);
   });
 
   const use = new Command()
@@ -51,21 +37,20 @@ if (import.meta.main) {
           configPath,
           configText,
           currentRegistry,
-        } = await prepare(local);
+        } = await getConfig(local);
 
-        if (newRegistry === currentRegistry) {
-          console.log(listRegistrys(currentRegistry) + "\n");
-          return;
+        if (newRegistry !== currentRegistry) {
+          let newConfigText: string;
+          const registryValue = registrys[newRegistry];
+          if (!registryReg.test(configText)) {
+            newConfigText = configText + `registry=${registryValue}`;
+          } else {
+            newConfigText = configText.replace(registryReg, registryValue);
+          }
+          await Deno.writeTextFile(configPath, newConfigText);
         }
-        let newConfigText: string;
-        const registryValue = registrys[newRegistry];
-        if (!registryReg.test(configText)) {
-          newConfigText = configText + `registry=${registryValue}`;
-        } else {
-          newConfigText = configText.replace(registryReg, registryValue);
-        }
-        await Deno.writeTextFile(configPath, newConfigText);
-        console.log(listRegistrys(newRegistry) + "\n");
+
+        printListRegistrys(newRegistry);
       },
     );
 
@@ -75,12 +60,8 @@ if (import.meta.main) {
     .version("0.4.1")
     .description("deno 实现的 nrm，每次切换源都在 100ms 内，速度超级快")
     .action(async () => {
-      const { currentRegistry } = await prepare();
-      console.log(
-        `\n ${
-          brightGreen(`${currentRegistry} -> ${registrys[currentRegistry]}`)
-        }\n`,
-      );
+      const { currentRegistry } = await getConfig();
+      printCurrentRegistry(currentRegistry);
     })
     .command("ls", ls)
     .command("test", test)
