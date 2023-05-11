@@ -1,7 +1,7 @@
 <div align="center">
     <img width="100%" height="100%" src="./snapshot.gif" />
     <h1>dnrm</h1>
-    <p>deno 实现的 nrm，每次切换源都在 100ms 内，速度超级快</p>
+    <p><a href="https://deno.com/runtime" target="_blank">deno</a> 实现的 nrm，每次切换源都在 100ms 内，速度超级快</p>
 </div>
 
 <br />
