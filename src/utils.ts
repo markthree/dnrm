@@ -1,19 +1,20 @@
 function noop() {}
 
 export function createDelay(s: number, flag: unknown = null) {
-  let resolve: (value?: unknown) => void = noop;
   let resolved = false;
+  let resolve: (value?: unknown) => void = noop;
 
   const delay = new Promise((_resolve) => {
-    resolve = (newFlag: unknown = flag) => {
-      if (!resolved) {
-        _resolve(newFlag);
-      }
-    };
-    setTimeout(() => {
+    const timeout = setTimeout(() => {
       _resolve(flag);
       resolved = true;
     }, s * 1000);
+    resolve = (newFlag: unknown = flag) => {
+      if (!resolved) {
+        clearTimeout(timeout);
+        _resolve(newFlag);
+      }
+    };
   });
 
   return {
