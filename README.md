@@ -4,6 +4,8 @@
     <p>deno 实现的 nrm，每次切换源都在 100ms 内，速度超级快</p>
 </div>
 
+<br />
+
 ## Usage
 
 ### install
@@ -11,7 +13,7 @@
 #### 1. 模块安装
 
 ```shell
-deno install --allow-read --allow-run --allow-write --allow-env --allow-net -rfn dnrm https://deno.land/x/dnrm/mod.ts
+deno install --allow-read --allow-write --allow-env --allow-net -rfn dnrm https://deno.land/x/dnrm/mod.ts
 ```
 
 #### 2. 本地安装
@@ -48,6 +50,14 @@ dnrm -h
 # 查看版本号
 dnrm -V
 ```
+
+<br />
+
+## 优化原理
+
+1. `deno` 的冷启动比 `node` 更快
+2. 针对 `registry` 配置使用正则快速获取和替换配置，不使用任何耗时的解析器，不需要序列化和反序列化
+3. 直接针对配置文件进行配置替换，而不是调用子进程执行 `npm config set registry=...`，因为 `npm` 内部分支太多，这是卡的主要原因
 
 <br />
 
