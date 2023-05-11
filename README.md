@@ -8,6 +8,14 @@
 
 ### install
 
+#### 1. 模块安装
+
+```shell
+deno instal deno install --unstable --allow-read --allow-write --allow-env --allow-net -rfn dnrm https://deno.land/x/dnrm/mod.ts
+```
+
+#### 2. 本地安装
+
 1. 下载该项目到本地
 
 2. 在项目根目录下执行命令
