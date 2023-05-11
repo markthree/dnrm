@@ -1,5 +1,5 @@
-import { brightGreen } from "https://deno.land/std@0.170.0/fmt/colors.ts";
-import { ensureFile } from "https://deno.land/std@0.185.0/fs/ensure_file.ts";
+import { brightGreen } from "https://deno.land/std@0.186.0/fmt/colors.ts";
+import { ensureFile } from "https://deno.land/std@0.186.0/fs/ensure_file.ts";
 import {
   Command,
   EnumType,

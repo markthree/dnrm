@@ -11,7 +11,7 @@
 #### 1. 模块安装
 
 ```shell
-deno install --unstable --allow-read --allow-run --allow-write --allow-env --allow-net -rfn dnrm https://deno.land/x/dnrm/mod.ts
+deno install --allow-read --allow-run --allow-write --allow-env --allow-net -rfn dnrm https://deno.land/x/dnrm/mod.ts
 ```
 
 #### 2. 本地安装

@@ -4,7 +4,7 @@ import {
   dim,
   gray,
   yellow,
-} from "https://deno.land/std@0.170.0/fmt/colors.ts";
+} from "https://deno.land/std@0.186.0/fmt/colors.ts";
 
 import { createDelay } from "./utils.ts";
 
@@ -39,11 +39,11 @@ export async function listRegistrysWithNetworkDelay(
   currentRegistry: string,
   timeoutDlay = 2,
 ) {
+  const TIMEOUT_ERROR = new Error("timeout");
   const list = await Promise.all(
-    registryKeys.map(async (k) => {
+    registryKeys.map(async (k, timeoutFlag) => {
       const v = registrys[k];
       let delayText: string;
-      const timeoutFlag = Symbol();
       const { delay, resolve } = createDelay(timeoutDlay, timeoutFlag);
       const controller = new AbortController();
       try {
@@ -53,7 +53,7 @@ export async function listRegistrysWithNetworkDelay(
           fetch(v, { signal: controller.signal }),
         ]);
         if (result === timeoutFlag) {
-          throw new Error("timeout");
+          throw TIMEOUT_ERROR;
         }
         const finalDelay = (Date.now() - start) / 1000;
         delayText = `${finalDelay.toFixed(2)}s`;
