@@ -5,7 +5,7 @@ import {
 
 import { getConfig, registryReg } from "./src/config.ts";
 import {
-  printCurrentRegistry,
+  printConfigRegistry,
   printListRegistrys,
   printListRegistrysWithNetworkDelay,
 } from "./src/print.ts";
@@ -15,13 +15,13 @@ if (import.meta.main) {
   const optionalRegistry = new EnumType(registryKeys);
 
   const ls = new Command().description("列出源").action(async () => {
-    const { currentRegistry } = await getConfig();
-    printListRegistrys(currentRegistry);
+    const { configRegistry } = await getConfig();
+    printListRegistrys(configRegistry);
   });
 
   const test = new Command().description("测试源").action(async () => {
-    const { currentRegistry } = await getConfig();
-    await printListRegistrysWithNetworkDelay(currentRegistry);
+    const { configRegistry } = await getConfig();
+    await printListRegistrysWithNetworkDelay(configRegistry);
   });
 
   const use = new Command()
@@ -36,10 +36,10 @@ if (import.meta.main) {
         const {
           configPath,
           configText,
-          currentRegistry,
+          configRegistry,
         } = await getConfig(local);
 
-        if (newRegistry !== currentRegistry) {
+        if (newRegistry !== configRegistry) {
           let newConfigText: string;
           const registryValue = registrys[newRegistry];
           if (!registryReg.test(configText)) {
@@ -60,8 +60,8 @@ if (import.meta.main) {
     .version("0.4.2")
     .description("deno 实现的 nrm，每次切换源都在 100ms 内，速度超级快")
     .action(async () => {
-      const { currentRegistry } = await getConfig();
-      printCurrentRegistry(currentRegistry);
+      const { configRegistry } = await getConfig();
+      printConfigRegistry(configRegistry);
     })
     .command("ls", ls)
     .command("test", test)

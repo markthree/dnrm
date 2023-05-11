@@ -23,10 +23,10 @@ export const registrys: Registrys = {
 
 export const registryKeys = Object.keys(registrys);
 
-export function listRegistrys(currentRegistry: string) {
+export function listRegistrys(configRegistry: string) {
   const list = registryKeys.map((k) => {
     const v = registrys[k];
-    if (currentRegistry === k) {
+    if (configRegistry === k) {
       return `\n ${brightGreen(`${k} → ${v}`)}`;
     }
     return `\n ${k}${gray(` → ${v}`)}`;
@@ -36,7 +36,7 @@ export function listRegistrys(currentRegistry: string) {
 }
 
 export async function listRegistrysWithNetworkDelay(
-  currentRegistry: string,
+  configRegistry: string,
   timeoutDlay = 2,
 ) {
   const TIMEOUT_ERROR = new Error("timeout");
@@ -66,7 +66,7 @@ export async function listRegistrysWithNetworkDelay(
       } finally {
         resolve();
       }
-      if (currentRegistry === k) {
+      if (configRegistry === k) {
         return `\n ${brightGreen(`${k} → ${v}`)} ${delayText}`;
       }
       return `\n ${k}${gray(` → ${v}`)} ${delayText}`;

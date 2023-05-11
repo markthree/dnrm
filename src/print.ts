@@ -8,20 +8,20 @@ import {
 
 const newLine = "\n";
 
-export function printListRegistrys(currentRegistry: string) {
-  console.log(listRegistrys(currentRegistry) + newLine);
+export function printListRegistrys(registry: string) {
+  console.log(listRegistrys(registry) + newLine);
 }
 
 export async function printListRegistrysWithNetworkDelay(
-  currentRegistry: string,
+  registry: string,
 ) {
-  console.log(await listRegistrysWithNetworkDelay(currentRegistry) + newLine);
+  console.log(await listRegistrysWithNetworkDelay(registry) + newLine);
 }
 
-export function printCurrentRegistry(currentRegistry: string) {
+export function printConfigRegistry(registry: string) {
   console.log(
     `${newLine} ${
-      brightGreen(`${currentRegistry} -> ${registrys[currentRegistry]}`)
+      brightGreen(`${registry} -> ${registrys[registry]}`)
     } ${newLine}`,
   );
 }
