@@ -6,7 +6,6 @@ import {
 } from "https://deno.land/x/cliffy@v0.25.7/command/mod.ts";
 
 import {
-  CONFIG_NAME,
   getCurrentRegistry,
   getUserConfigPath,
   registryReg,
@@ -45,7 +44,7 @@ if (import.meta.main) {
     .type("optionalRegistry", optionalRegistry)
     .arguments("<registry:optionalRegistry>").option(
       "-l, --local",
-      `设置 ${CONFIG_NAME} 在本地`,
+      `设置 .npmrc 在本地`,
     ).action(
       async ({ local }, newRegistry) => {
         const {
