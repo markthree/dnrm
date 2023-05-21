@@ -39,14 +39,17 @@ if (import.meta.main) {
           configRegistry,
         } = await getConfig(local);
 
-        if (newRegistry !== configRegistry) {
-          let newConfigText: string;
-          const registryValue = registrys[newRegistry];
-          if (!registryReg.test(configText)) {
-            newConfigText = configText + `registry=${registryValue}`;
-          } else {
+        let newConfigText: string | undefined;
+        const registryValue = registrys[newRegistry];
+        if (!registryReg.test(configText)) {
+          newConfigText = configText + `registry=${registryValue}`;
+        } else {
+          if (newRegistry !== configRegistry) {
             newConfigText = configText.replace(registryReg, registryValue);
           }
+        }
+
+        if (newConfigText) {
           await Deno.writeTextFile(configPath, newConfigText);
         }
 
