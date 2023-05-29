@@ -10,6 +10,7 @@ import {
   printListRegistrysWithNetworkDelay,
 } from "./src/print.ts";
 import { registryKeys, registrys } from "./src/registrys.ts";
+import { version } from "./src/version.ts";
 
 if (import.meta.main) {
   const optionalRegistry = new EnumType(registryKeys);
@@ -60,7 +61,7 @@ if (import.meta.main) {
   await new Command()
     .usage("[command|option]")
     .name("dnrm")
-    .version("0.4.3")
+    .version(version)
     .description("deno 实现的 nrm，每次切换源都在 100ms 内，速度超级快")
     .action(async () => {
       const { configRegistry } = await getConfig();
