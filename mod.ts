@@ -5,11 +5,12 @@ import {
 
 import { getConfig, registryReg } from "./src/config.ts";
 import {
-  printConfigRegistry,
   printListRegistrys,
   printListRegistrysWithNetworkDelay,
-} from "./src/print.ts";
-import { registryKeys, registrys } from "./src/registrys.ts";
+  printRegistry,
+  registryKeys,
+  registrys,
+} from "./src/registrys.ts";
 import { version } from "./src/version.ts";
 
 if (import.meta.main) {
@@ -65,7 +66,7 @@ if (import.meta.main) {
     .description("deno 实现的 nrm，每次切换源都在 100ms 内，速度超级快")
     .action(async () => {
       const { configRegistry } = await getConfig();
-      printConfigRegistry(configRegistry);
+      printRegistry(configRegistry);
     })
     .command("ls", ls)
     .command("test", test)

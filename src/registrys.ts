@@ -1,12 +1,15 @@
+import { SECOND } from "https://deno.land/std@0.190.0/datetime/constants.ts";
+import { deadline } from "https://deno.land/std@0.190.0/async/deadline.ts";
+import {
+  joinToString,
+  type JoinToStringOptions,
+} from "https://deno.land/std@0.190.0/collections/join_to_string.ts";
 import {
   brightGreen,
   brightRed,
-  dim,
   gray,
   yellow,
-} from "https://deno.land/std@0.186.0/fmt/colors.ts";
-
-import { createDelay } from "./utils.ts";
+} from "https://deno.land/std@0.190.0/fmt/colors.ts";
 
 export interface Registrys {
   [k: string]: string;
@@ -23,55 +26,71 @@ export const registrys: Registrys = {
 
 export const registryKeys = Object.keys(registrys);
 
-export function listRegistrys(configRegistry: string) {
-  const list = registryKeys.map((k) => {
-    const v = registrys[k];
-    if (configRegistry === k) {
-      return `\n ${brightGreen(`${k} → ${v}`)}`;
-    }
-    return `\n ${k}${gray(` → ${v}`)}`;
-  });
+export const listJoinToStringOptions: JoinToStringOptions = {
+  suffix: "\n",
+  prefix: "\n ",
+  separator: "\n ",
+};
 
-  return list.join("");
+function bypass<T extends any>(t: T) {
+  return t;
 }
 
-export async function listRegistrysWithNetworkDelay(
+export function listRegistrys(
   configRegistry: string,
-  timeoutDlay = 2,
+  format: (v: string) => string = bypass,
 ) {
-  const TIMEOUT_ERROR = new Error("timeout");
-  const list = await Promise.all(
-    registryKeys.map(async (k, timeoutFlag) => {
-      const v = registrys[k];
-      let delayText: string;
-      const { delay, resolve } = createDelay(timeoutDlay, timeoutFlag);
+  return joinToString(registryKeys, (k) => {
+    const v = registrys[k];
+    if (configRegistry === k) {
+      return format(`${brightGreen(`${k} → ${v}`)}`);
+    }
+    return format(`${k}${gray(` → ${v}`)}`);
+  }, listJoinToStringOptions);
+}
+
+export function getRegistrysNetworkDelay(
+  ms = 2000,
+) {
+  return Promise.all(
+    registryKeys.map(async (k) => {
+      const url = registrys[k];
       const controller = new AbortController();
       try {
         const start = Date.now();
-        const result = await Promise.race([
-          delay,
-          fetch(v, { signal: controller.signal }),
-        ]);
-        if (result === timeoutFlag) {
-          throw TIMEOUT_ERROR;
-        }
-        const finalDelay = (Date.now() - start) / 1000;
-        delayText = `${finalDelay.toFixed(2)}s`;
-        delayText = finalDelay < 1
-          ? brightGreen(delayText)
-          : dim(yellow(delayText));
+        const request = fetch(url, { signal: controller.signal });
+        await deadline(request, ms);
+        return Date.now() - start;
       } catch (_) {
-        delayText = dim(brightRed(`> ${timeoutDlay}s`));
         controller.abort();
-      } finally {
-        resolve();
       }
-      if (configRegistry === k) {
-        return `\n ${brightGreen(`${k} → ${v}`)} ${delayText}`;
-      }
-      return `\n ${k}${gray(` → ${v}`)} ${delayText}`;
+      return Infinity;
     }),
   );
+}
 
-  return list.join("");
+export function printListRegistrys(registry: string) {
+  console.log(listRegistrys(registry));
+}
+
+export async function printListRegistrysWithNetworkDelay(
+  registry: string,
+  ms = 2000,
+) {
+  const delays = await getRegistrysNetworkDelay(ms);
+  function format(text: string) {
+    const delay = delays.shift()! / SECOND;
+    if (delay === Infinity) {
+      return text + ` ${brightRed(`> ${ms / SECOND}s`)}`;
+    }
+    const delayText = `${delay.toFixed(2)}s`;
+    return text + ` ${delay < 1 ? brightGreen(delayText) : yellow(delayText)}`;
+  }
+  console.log(listRegistrys(registry, format));
+}
+
+export function printRegistry(registry: string) {
+  console.log(
+    `\n ${brightGreen(`${registry} -> ${registrys[registry]}`)} \n`,
+  );
 }
