@@ -16,6 +16,12 @@
 deno install --allow-read --allow-write --allow-env --allow-net -rfn dnrm https://deno.land/x/dnrm/mod.ts
 ```
 
+如果你没有安装过 [deno](https://deno.com/runtime) 👇
+
+```shell
+npx deno-npx install --allow-read --allow-write --allow-env --allow-net -rfn dnrm https://deno.land/x/dnrm/mod.ts
+```
+
 #### 2. 本地安装
 
 1. 下载该项目到本地
