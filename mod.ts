@@ -1,7 +1,4 @@
-import {
-  Command,
-  EnumType,
-} from "https://deno.land/x/cliffy@v0.25.7/command/mod.ts";
+import { Command, EnumType } from "./src/deps.ts";
 
 import { getConfig, registryReg } from "./src/config.ts";
 import {

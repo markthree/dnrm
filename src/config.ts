@@ -1,12 +1,8 @@
-import { ensureFile } from "https://deno.land/std@0.190.0/fs/ensure_file.ts";
-import { exists } from "https://deno.land/std@0.190.0/fs/exists.ts";
-import { resolve } from "https://deno.land/std@0.190.0/path/mod.ts";
-import { homedir } from "node:os";
-
+import { ensureFile, exists, homedir, resolve } from "./deps.ts";
 import { registryKeys, registrys } from "./registrys.ts";
 
 export async function ensureGetConfigPath(local = false) {
-  let rc = ".npmrc"
+  let rc = ".npmrc";
   if (await exists(rc)) {
     return rc;
   }

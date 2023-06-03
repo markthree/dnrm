@@ -1,15 +1,13 @@
-import { SECOND } from "https://deno.land/std@0.190.0/datetime/constants.ts";
-import { deadline } from "https://deno.land/std@0.190.0/async/deadline.ts";
-import {
-  joinToString,
-  type JoinToStringOptions,
-} from "https://deno.land/std@0.190.0/collections/join_to_string.ts";
 import {
   brightGreen,
   brightRed,
+  deadline,
   gray,
+  joinToString,
+  type JoinToStringOptions,
+  SECOND,
   yellow,
-} from "https://deno.land/std@0.190.0/fmt/colors.ts";
+} from "./deps.ts";
 
 export interface Registrys {
   [k: string]: string;
@@ -35,7 +33,6 @@ export const listJoinToStringOptions: JoinToStringOptions = {
 function bypass<T extends any>(t: T) {
   return t;
 }
-
 export function listRegistrys(
   configRegistry: string,
   format: (v: string) => string = bypass,
