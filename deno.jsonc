@@ -8,5 +8,6 @@
        "rules": {
         "exclude": ["no-explicit-any"]
        }
-    }
+    },
+    "lock": true
 }
