@@ -42,28 +42,34 @@ await build({
     },
   },
   async postBuild() {
+    const mod = "./npm/esm/mod.js";
+    let modText = await Deno.readTextFile(mod);
+
+    modText = shebang(cleanModuleMetadata(modText));
+
     await Promise.all(
       [
         Deno.copyFile("LICENSE", "npm/LICENSE"),
         Deno.copyFile("README.md", "npm/README.md"),
-        cleanModuleMetadata(),
+        Deno.writeTextFile(mod, modText),
       ],
     );
+
+    await execa(["deno", "fmt", mod]);
+
     await execa(["npm", "publish"], {
       cwd: "./npm",
     });
   },
 });
 
-async function cleanModuleMetadata() {
-  const mod = "npm/esm/mod.js";
-
-  const text = await Deno.readTextFile(mod);
-
-  const normalizedText = text.replace(
+function cleanModuleMetadata(text: string) {
+  return text.replace(
     /if.*\(import.meta.main\).*{([\w\W]*)}/,
     "$1",
   )!;
+}
 
-  await Deno.writeTextFile(mod, normalizedText);
+function shebang(text: string) {
+  return `#!/usr/bin/env node\n${text}`;
 }
