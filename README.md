@@ -22,6 +22,12 @@ deno install --allow-read --allow-write --allow-env --allow-net -rfn dnrm https:
 npx deno-npx install --allow-read --allow-write --allow-env --allow-net -rfn dnrm https://deno.land/x/dnrm/mod.ts
 ```
 
+或者用 `npm` 安装
+
+```shell
+npm i deno-nrm -g
+```
+
 #### 2. 本地安装
 
 1. 下载该项目到本地
