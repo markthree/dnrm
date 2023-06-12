@@ -20,6 +20,7 @@ await build({
     version: version,
     bin: {
       dnrm: "esm/mod.js",
+      "deno-nrm": "esm/mod.js",
     },
     description: "deno 实现的 nrm，每次切换源都在 100ms 内，速度超级快",
     license: "MIT",
