@@ -6,6 +6,12 @@
 
 <br />
 
+## README 🦉
+
+简体中文 | [English](./README_EN.md)
+
+<br />
+
 ## Usage
 
 ### install
