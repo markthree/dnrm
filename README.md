@@ -16,16 +16,17 @@
 deno install --allow-read --allow-write --allow-env --allow-net -rfn dnrm https://deno.land/x/dnrm/mod.ts
 ```
 
-如果你没有安装过 [deno](https://deno.com/runtime) 👇
+如果你装了 [node](https://nodejs.org)，却没有安装过 [deno](https://deno.com/runtime) 👇
 
 ```shell
 npx deno-npx install --allow-read --allow-write --allow-env --allow-net -rfn dnrm https://deno.land/x/dnrm/mod.ts
 ```
 
-或者用 `npm` 安装
+在一些不想装 [deno](https://deno.com/runtime) 的临时场景下 👇
 
 ```shell
-npm i deno-nrm -g
+# 注意: 这种使用方式仍然很慢，因为加载 deno 垫片需要时间
+npm i deno-nrm -g 
 ```
 
 #### 2. 本地安装
