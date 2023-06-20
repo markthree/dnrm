@@ -15,24 +15,14 @@ export async function ensureGetConfigPath(local = false) {
 
 export const registryReg = /(?<=registry=).*/;
 
-function parseRegistry(text: string) {
-  const [registry] = registryReg.exec(text) || [];
-  return registry ?? "npm";
-}
-
 export function getConfigRegistry(configText: string) {
-  const registry = parseRegistry(configText);
-  return registryKeys.find((k) => {
-    if (k === registry) {
-      return registry;
-    }
-    return registrys[k] === registry;
-  }) ?? registry;
+  const [url] = registryReg.exec(configText) || [];
+  return registryKeys.find((k) => registrys[k] === url);
 }
 
 export async function getConfig(local?: boolean) {
   const configPath = await ensureGetConfigPath(local);
   const configText = await Deno.readTextFile(configPath);
-  const configRegistry = getConfigRegistry(configText);
+  const configRegistry = getConfigRegistry(configText) ?? "npm";
   return { configPath, configRegistry, configText };
 }
