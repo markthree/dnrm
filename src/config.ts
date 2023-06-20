@@ -5,7 +5,7 @@ import { hotUrlRegistrys, registryKeys, registrys } from "./constant.ts";
 
 async function getConfigPath(local = false) {
   const rc = ".npmrc";
-  if (local || (await exists(rc, { isFile: true, isReadable: true }))) {
+  if (local || (await exists(rc, { isFile: true }))) {
     return rc;
   }
   return `${homedir().replaceAll("\\", "/")}/${rc}`;
@@ -19,7 +19,6 @@ export function getConfigRegistry(configText: string) {
 
 export async function getConfig(local?: boolean) {
   const configPath = await getConfigPath(local);
-  console.log(configPath);
   try {
     const configText = await Deno.readTextFile(configPath);
     const configRegistry = getConfigRegistry(configText) ?? "npm";
