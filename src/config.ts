@@ -1,5 +1,8 @@
-import { exists, homedir, resolve } from "./deps.ts";
-import { hotUrlRegistrys, registryKeys, registrys } from "./registrys.ts";
+import { homedir } from "node:os";
+import { registryReg } from "./constant.ts";
+import { exists } from "https://deno.land/std@0.192.0/fs/exists.ts";
+import { resolve } from "https://deno.land/std@0.192.0/path/posix.ts";
+import { hotUrlRegistrys, registryKeys, registrys } from "./constant.ts";
 
 async function getConfigPath(local = false) {
   const rc = ".npmrc";
@@ -8,8 +11,6 @@ async function getConfigPath(local = false) {
   }
   return resolve(homedir(), rc);
 }
-
-export const registryReg = /(?<=registry=).*/;
 
 export function getConfigRegistry(configText: string) {
   const [url = ""] = registryReg.exec(configText) || [];

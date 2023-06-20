@@ -57,9 +57,9 @@ await build({
 
     await execa(["deno", "fmt", mod]);
 
-    await execa(["npm", "publish"], {
-      cwd: "./npm",
-    });
+    // await execa(["npm", "publish"], {
+    //   cwd: "./npm",
+    // });
   },
 });
 

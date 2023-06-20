@@ -1,51 +1,25 @@
 import {
   brightGreen,
   brightRed,
-  deadline,
   gray,
-  joinToString,
-  SECOND,
   yellow,
-} from "./deps.ts";
+} from "https://deno.land/std@0.192.0/fmt/colors.ts";
 
-export interface Registrys {
-  [k: string]: string;
-}
-
-/**
- * Hot path for quick search
- */
-export const hotUrlRegistrys: Record<
-  string,
-  string
-> = {
-  "https://registry.npmjs.org/": "npm",
-  "https://registry.npmmirror.com/": "taobao",
-};
-
-export const registrys: Registrys = {
-  npm: "https://registry.npmjs.org/",
-  yarn: "https://registry.yarnpkg.com/",
-  github: "https://npm.pkg.github.com/",
-  taobao: "https://registry.npmmirror.com/",
-  npmMirror: "https://skimdb.npmjs.com/registry/",
-  tencent: "https://mirrors.cloud.tencent.com/npm/",
-};
-
-export const registryKeys = Object.keys(registrys);
+import { line, registryKeys, registrys, SECOND } from "./constant.ts";
 
 export function listRegistrys(
   configRegistry: string,
   format?: (v: string) => string,
 ) {
-  const line = "\n ";
   const hasFormat = typeof format === "function";
 
-  return joinToString(registryKeys, selector, {
-    suffix: line,
-    prefix: line,
-    separator: line,
-  });
+  let result = "";
+
+  for (const k of registryKeys) {
+    result += line + selector(k);
+  }
+
+  return result + line;
 
   function selector(k: string) {
     const v = registrys[k];
@@ -56,9 +30,13 @@ export function listRegistrys(
   }
 }
 
-export function getRegistrysNetworkDelay(
+export async function getRegistrysNetworkDelay(
   ms = 2000,
 ) {
+  // test is a low frequency event, so delay the import of the module
+  const { deadline } = await import(
+    "https://deno.land/std@0.192.0/async/deadline.ts"
+  );
   return Promise.all(
     registryKeys.map(async (k) => {
       const url = registrys[k];
@@ -99,6 +77,6 @@ export async function printListRegistrysWithNetworkDelay(
 
 export function printRegistry(registry: string) {
   console.log(
-    `\n ${brightGreen(`${registry} -> ${registrys[registry]}`)} \n`,
+    `${line}${brightGreen(`${registry} -> ${registrys[registry]}`)}${line}`,
   );
 }
