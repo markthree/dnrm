@@ -46,7 +46,12 @@ if (import.meta.main) {
           newConfigText = `registry=${url}`;
         } else if (!registryReg.test(configText)) {
           // append
-          newConfigText = configText + `\nregistry=${url}`;
+          const line = "\n";
+          let newRegistryText = `registry=${url}`;
+          if (!configText.endsWith(line)) {
+            newRegistryText = line + newConfigText;
+          }
+          newConfigText = configText + newRegistryText;
         } else {
           // update
           if (newRegistry !== configRegistry) {
