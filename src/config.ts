@@ -1,5 +1,5 @@
 import { exists, homedir, resolve } from "./deps.ts";
-import { registryKeys, registrys } from "./registrys.ts";
+import { hotUrlRegistrys, registryKeys, registrys } from "./registrys.ts";
 
 async function getConfigPath(local = false) {
   const rc = ".npmrc";
@@ -12,8 +12,9 @@ async function getConfigPath(local = false) {
 export const registryReg = /(?<=registry=).*/;
 
 export function getConfigRegistry(configText: string) {
-  const [url] = registryReg.exec(configText) || [];
-  return registryKeys.find((k) => registrys[k] === url);
+  const [url = ""] = registryReg.exec(configText) || [];
+  return hotUrlRegistrys[url] ??
+    registryKeys.find((k) => registrys[k] === url);
 }
 
 export async function getConfig(local?: boolean) {
