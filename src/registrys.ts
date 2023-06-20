@@ -4,7 +4,6 @@ import {
   deadline,
   gray,
   joinToString,
-  type JoinToStringOptions,
   SECOND,
   yellow,
 } from "./deps.ts";
@@ -35,26 +34,26 @@ export const registrys: Registrys = {
 
 export const registryKeys = Object.keys(registrys);
 
-export const listJoinToStringOptions: JoinToStringOptions = {
-  suffix: "\n",
-  prefix: "\n ",
-  separator: "\n ",
-};
-
-function bypass<T extends any>(t: T) {
-  return t;
-}
 export function listRegistrys(
   configRegistry: string,
-  format: (v: string) => string = bypass,
+  format?: (v: string) => string,
 ) {
-  return joinToString(registryKeys, (k) => {
+  const line = "\n ";
+  const hasFormat = typeof format === "function";
+
+  return joinToString(registryKeys, selector, {
+    suffix: line,
+    prefix: line,
+    separator: line,
+  });
+
+  function selector(k: string) {
     const v = registrys[k];
-    if (configRegistry === k) {
-      return format(`${brightGreen(`${k} → ${v}`)}`);
-    }
-    return format(`${k}${gray(` → ${v}`)}`);
-  }, listJoinToStringOptions);
+    const text = configRegistry === k
+      ? `${brightGreen(`${k} → ${v}`)}`
+      : `${k}${gray(` → ${v}`)}`;
+    return hasFormat ? format(text) : text;
+  }
 }
 
 export function getRegistrysNetworkDelay(
@@ -86,10 +85,11 @@ export async function printListRegistrysWithNetworkDelay(
   ms = 2000,
 ) {
   const delays = await getRegistrysNetworkDelay(ms);
+  const timeoutText = ` ${brightRed(`> ${ms / SECOND}s`)}`;
   function format(text: string) {
     const delay = delays.shift()! / SECOND;
     if (delay === Infinity) {
-      return text + ` ${brightRed(`> ${ms / SECOND}s`)}`;
+      return text + timeoutText;
     }
     const delayText = `${delay.toFixed(2)}s`;
     return text + ` ${delay < 1 ? brightGreen(delayText) : yellow(delayText)}`;
