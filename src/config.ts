@@ -1,7 +1,6 @@
 import { homedir } from "node:os";
 import { registryReg } from "./constant.ts";
 import { exists } from "https://deno.land/std@0.192.0/fs/exists.ts";
-import { resolve } from "https://deno.land/std@0.192.0/path/posix.ts";
 import { hotUrlRegistrys, registryKeys, registrys } from "./constant.ts";
 
 async function getConfigPath(local = false) {
@@ -9,7 +8,7 @@ async function getConfigPath(local = false) {
   if (local || (await exists(rc, { isFile: true, isReadable: true }))) {
     return rc;
   }
-  return resolve(homedir(), rc);
+  return `${homedir().replaceAll("\\", "/")}/${rc}`;
 }
 
 export function getConfigRegistry(configText: string) {
@@ -20,6 +19,7 @@ export function getConfigRegistry(configText: string) {
 
 export async function getConfig(local?: boolean) {
   const configPath = await getConfigPath(local);
+  console.log(configPath);
   try {
     const configText = await Deno.readTextFile(configPath);
     const configRegistry = getConfigRegistry(configText) ?? "npm";
