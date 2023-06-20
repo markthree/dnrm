@@ -22,7 +22,8 @@
 deno install --allow-read --allow-write --allow-env --allow-net -rfn dnrm https://deno.land/x/dnrm/mod.ts
 ```
 
-如果你装了 [node](https://nodejs.org)，却没有安装过 [deno](https://deno.com/runtime) 👇
+如果你装了 [node](https://nodejs.org)，却没有安装过
+[deno](https://deno.com/runtime) 👇
 
 ```shell
 npx deno-npx install --allow-read --allow-write --allow-env --allow-net -rfn dnrm https://deno.land/x/dnrm/mod.ts
@@ -32,7 +33,7 @@ npx deno-npx install --allow-read --allow-write --allow-env --allow-net -rfn dnr
 
 ```shell
 # 注意: 这种使用方式仍然很慢，因为加载 deno 垫片需要时间
-npm i deno-nrm -g 
+npm i deno-nrm -g
 ```
 
 #### 2. 本地安装
@@ -74,9 +75,13 @@ dnrm -V
 
 ## 优化原理
 
-1. `deno` 的冷启动比 `node` 更快
-2. 针对 `registry` 配置使用正则快速获取和替换配置，不使用任何耗时的解析器，不需要序列化和反序列化
-3. 直接针对配置文件进行配置替换，而不是调用子进程执行 `npm config set registry=...`，因为 `npm` 内部分支太多，这是卡的主要原因
+1. 热路径查询
+2. `deno` 的冷启动比 `node` 更快
+3. 按需懒加载低频模块，按需懒生成配置文件
+4. 针对 `registry`
+   配置使用正则快速获取和替换配置，不使用任何耗时的解析器，不需要序列化和反序列化
+5. 直接针对配置文件进行配置替换，而不是调用子进程执行
+   `npm config set registry=...`，因为 `npm` 内部分支太多，这是卡的主要原因
 
 <br />
 

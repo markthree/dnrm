@@ -22,17 +22,19 @@
 deno install --allow-read --allow-write --allow-env --allow-net -rfn dnrm https://deno.land/x/dnrm/mod.ts
 ```
 
-If you have [node](https://nodejs.org) installed but have not installed [deno](https://deno.com/runtime) 👇
+If you have [node](https://nodejs.org) installed but have not installed
+[deno](https://deno.com/runtime) 👇
 
 ```shell
 npx deno-npx install --allow-read --allow-write --allow-env --allow-net -rfn dnrm https://deno.land/x/dnrm/mod.ts
 ```
 
-In some temporary scenarios where you don't want to install [deno](https://deno.com/runtime) 👇
+In some temporary scenarios where you don't want to install
+[deno](https://deno.com/runtime) 👇
 
 ```shell
 # Note: This usage is still slow because it takes time to load the deno shims
-npm i deno-nrm -g 
+npm i deno-nrm -g
 ```
 
 #### 2. Local Installation
@@ -74,9 +76,16 @@ dnrm -V
 
 ## Optimization Principle
 
-1. `deno` has a faster cold start than `node`. 
-2. use regular configuration for `registry` configuration to quickly fetch and replace configuration without any time-consuming parser, no serialization and deserialization
-3. replace the configuration directly against the configuration file instead of calling a child process to do `npm config set registry=... `, because `npm` has too many internal branches, which is the main reason for getting stuck
+1. Hot Path Search
+2. `deno` has a faster cold start than `node`.
+3. On-demand lazy loading of low-frequency modules, on-demand lazy configuration
+   file generation
+4. use regular configuration for `registry` configuration to quickly fetch and
+   replace configuration without any time-consuming parser, no serialization and
+   deserialization
+5. replace the configuration directly against the configuration file instead of
+   calling a child process to do `npm config set registry=...`, because `npm`
+   has too many internal branches, which is the main reason for getting stuck
 
 <br />
 
