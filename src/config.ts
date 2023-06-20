@@ -1,16 +1,12 @@
-import { ensureFile, exists, homedir, resolve } from "./deps.ts";
+import { exists, homedir, resolve } from "./deps.ts";
 import { registryKeys, registrys } from "./registrys.ts";
 
-export async function ensureGetConfigPath(local = false) {
-  let rc = ".npmrc";
-  if (await exists(rc)) {
+async function getConfigPath(local = false) {
+  const rc = ".npmrc";
+  if (local || (await exists(rc, { isFile: true, isReadable: true }))) {
     return rc;
   }
-  if (!local) {
-    rc = resolve(homedir(), rc);
-  }
-  await ensureFile(rc);
-  return rc;
+  return resolve(homedir(), rc);
 }
 
 export const registryReg = /(?<=registry=).*/;
@@ -21,8 +17,19 @@ export function getConfigRegistry(configText: string) {
 }
 
 export async function getConfig(local?: boolean) {
-  const configPath = await ensureGetConfigPath(local);
-  const configText = await Deno.readTextFile(configPath);
-  const configRegistry = getConfigRegistry(configText) ?? "npm";
-  return { configPath, configRegistry, configText };
+  const configPath = await getConfigPath(local);
+  try {
+    const configText = await Deno.readTextFile(configPath);
+    const configRegistry = getConfigRegistry(configText) ?? "npm";
+    return { configPath, configRegistry, configText };
+  } catch (error) {
+    if (error instanceof Deno.errors.NotFound) {
+      return {
+        configPath,
+        configText: "",
+        configRegistry: "npm",
+      };
+    }
+    throw error;
+  }
 }
