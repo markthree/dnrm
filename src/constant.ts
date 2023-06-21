@@ -8,6 +8,7 @@ interface Registrys {
 
 /**
  * Hot path for quick search
+ * 热路径以便快速查询
  */
 export const hotUrlRegistrys: Record<
   string,

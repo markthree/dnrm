@@ -78,8 +78,8 @@ dnrm -V
 
 1. Hot Path Search
 2. `deno` has a faster cold start than `node`.
-3. On-demand lazy loading of low-frequency modules, on-demand lazy configuration
-   file generation
+3. Automatically distinguish usage scenarios, parse parameters on demand, load
+   low-frequency modules on demand, and set profiles on demand
 4. use regular configuration for `registry` configuration to quickly fetch and
    replace configuration without any time-consuming parser, no serialization and
    deserialization
