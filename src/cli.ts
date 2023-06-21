@@ -5,24 +5,11 @@ import {
 
 import { registryKeys, registryReg, registrys } from "./constant.ts";
 import { getConfig } from "./config.ts";
-import {
-  printListRegistrys,
-  printListRegistrysWithNetworkDelay,
-} from "./registrys.ts";
+import { printListRegistrys } from "./registrys.ts";
 import { version } from "./version.ts";
 
 export async function action() {
   const optionalRegistry = new EnumType(registryKeys);
-
-  const ls = new Command().description("列出源").action(async () => {
-    const { configRegistry } = await getConfig();
-    printListRegistrys(configRegistry);
-  });
-
-  const test = new Command().description("测试源").action(async () => {
-    const { configRegistry } = await getConfig();
-    await printListRegistrysWithNetworkDelay(configRegistry);
-  });
 
   const use = new Command()
     .description(`使用源`)
@@ -72,8 +59,8 @@ export async function action() {
     .name("dnrm")
     .version(version)
     .description("deno 实现的 nrm，每次切换源都在 100ms 内，速度超级快")
-    .command("ls", ls)
-    .command("test", test)
+    .command("ls", "列出源")
+    .command("test", "测试源")
     .command("use", use)
     .parse(Deno.args);
 }
