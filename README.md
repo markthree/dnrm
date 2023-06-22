@@ -12,6 +12,12 @@
 
 <br />
 
+## Bench
+
+[npm 镜像源工具速度对比](https://graphy.app/view/1cf14605-7fd1-4a85-bed8-90e2a7e204ae?caption=true)
+
+<br />
+
 ## Usage
 
 ### install
