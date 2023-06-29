@@ -37,21 +37,22 @@ export async function getRegistrysNetworkDelay(
   const { deadline } = await import(
     "https://deno.land/std@0.192.0/async/deadline.ts"
   );
-  return Promise.all(
-    registryKeys.map(async (k) => {
-      const url = registrys[k];
-      const controller = new AbortController();
-      try {
-        const start = Date.now();
-        const request = fetch(url, { signal: controller.signal });
-        await deadline(request, ms);
-        return Date.now() - start;
-      } catch (_) {
-        controller.abort();
-      }
-      return Infinity;
-    }),
-  );
+
+  return Promise.all(registryKeys.map(getDelay));
+
+  async function getDelay(k: string) {
+    const url = registrys[k];
+    const controller = new AbortController();
+    try {
+      const start = Date.now();
+      const request = fetch(url, { signal: controller.signal });
+      await deadline(request, ms);
+      return Date.now() - start;
+    } catch (_) {
+      controller.abort();
+    }
+    return Infinity;
+  }
 }
 
 export function printListRegistrys(registry: string) {
@@ -64,6 +65,8 @@ export async function printListRegistrysWithNetworkDelay(
 ) {
   const delays = await getRegistrysNetworkDelay(ms);
   const timeoutText = ` ${brightRed(`> ${ms / SECOND}s`)}`;
+  console.log(listRegistrys(registry, format));
+
   function format(text: string) {
     const delay = delays.shift()! / SECOND;
     if (delay === Infinity) {
@@ -72,7 +75,6 @@ export async function printListRegistrysWithNetworkDelay(
     const delayText = `${delay.toFixed(2)}s`;
     return text + ` ${delay < 1 ? brightGreen(delayText) : yellow(delayText)}`;
   }
-  console.log(listRegistrys(registry, format));
 }
 
 export function printRegistry(registry: string) {
