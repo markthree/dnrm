@@ -51,6 +51,7 @@ await build({
       [
         Deno.copyFile("LICENSE", "npm/LICENSE"),
         Deno.copyFile("README.md", "npm/README.md"),
+        Deno.copyFile(".npmrc", "npm/.npmrc"),
         Deno.writeTextFile(mod, modText),
       ],
     );
