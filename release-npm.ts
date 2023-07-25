@@ -1,6 +1,6 @@
 import { version } from "./src/version.ts";
-import { build, emptyDir } from "https://deno.land/x/dnt@0.37.0/mod.ts";
-import { execa } from "https://deno.land/x/easy_std@v0.4.5/src/process.ts";
+import { build, emptyDir } from "https://deno.land/x/dnt@0.38.0/mod.ts";
+import { execa } from "https://deno.land/x/easy_std@v0.4.6/src/process.ts";
 
 await emptyDir("./npm");
 
@@ -58,9 +58,9 @@ await build({
 
     await execa(["deno", "fmt", mod]);
 
-    await execa(["npm", "publish"], {
-      cwd: "./npm",
-    });
+    // await execa(["npm", "publish"], {
+    //   cwd: "./npm",
+    // });
   },
 });
 
