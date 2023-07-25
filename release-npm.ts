@@ -10,6 +10,9 @@ await build({
   scriptModule: false,
   declaration: false,
   entryPoints: ["./mod.ts"],
+  compilerOptions: {
+    target: "ES2019",
+  },
   shims: {
     deno: true,
   },
@@ -58,9 +61,9 @@ await build({
 
     await execa(["deno", "fmt", mod]);
 
-    // await execa(["npm", "publish"], {
-    //   cwd: "./npm",
-    // });
+    await execa(["npm", "publish"], {
+      cwd: "./npm",
+    });
   },
 });
 
