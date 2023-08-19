@@ -3,9 +3,11 @@ import { registryReg } from "./constant.ts";
 import { exists } from "https://deno.land/std@0.198.0/fs/exists.ts";
 import { hotUrlRegistrys, registryKeys, registrys } from "./constant.ts";
 
-async function getConfigPath(local = false) {
+async function getConfigPath(local?: boolean) {
   const rc = ".npmrc";
-  if (local || (await exists(rc, { isFile: true }))) {
+  const detectLocal = local === undefined &&
+    (await exists(rc, { isFile: true }));
+  if (local || detectLocal) {
     return rc;
   }
   return `${homedir().replaceAll("\\", "/")}/${rc}`;

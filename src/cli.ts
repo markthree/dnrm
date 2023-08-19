@@ -13,16 +13,17 @@ export async function action() {
     .description(`使用源`)
     .usage(`[${registryKeys.join("|")}]`)
     .type("optionalRegistry", optionalRegistry)
-    .arguments("<registry:optionalRegistry>").option(
+    .arguments("<registry:optionalRegistry>").option("-g, --global", `全局设置`)
+    .option(
       "-l, --local",
-      `设置 .npmrc 在本地`,
+      `本地项目设置`,
     ).action(
-      async ({ local }, newRegistry) => {
+      async ({ global, local }, newRegistry) => {
         const {
           configPath,
           configText,
           configRegistry,
-        } = await getConfig(local);
+        } = await getConfig(global ? false : local);
 
         let newConfigText: string | undefined;
         const url = registrys[newRegistry];
