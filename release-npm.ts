@@ -1,6 +1,6 @@
 import { version } from "./src/version.ts";
-import { build, emptyDir } from "https://deno.land/x/dnt@0.38.0/mod.ts";
-import { execa } from "https://deno.land/x/easy_std@v0.4.6/src/process.ts";
+import { build, emptyDir } from "https://deno.land/x/dnt@0.38.1/mod.ts";
+import { execa } from "https://deno.land/x/easy_std@v0.4.8/src/process.ts";
 
 await emptyDir("./npm");
 
