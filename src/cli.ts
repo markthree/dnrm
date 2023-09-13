@@ -1,7 +1,7 @@
 import { EnumType } from "https://deno.land/x/cliffy@v1.0.0-rc.3/command/types/enum.ts";
 import { Command } from "https://deno.land/x/cliffy@v1.0.0-rc.3/command/command.ts";
 
-import { registryKeys, registryReg, registrys } from "./constant.ts";
+import { line, registryKeys, registryReg, registrys } from "./constant.ts";
 import { getConfig } from "./config.ts";
 import { printListRegistrys } from "./registrys.ts";
 import { version } from "./version.ts";
@@ -33,7 +33,6 @@ export async function action() {
           newConfigText = `registry=${url}`;
         } else if (!registryReg.test(configText)) {
           // append
-          const line = "\n";
           let newRegistryText = `registry=${url}`;
           if (!configText.endsWith(line)) {
             newRegistryText = line + newConfigText;
