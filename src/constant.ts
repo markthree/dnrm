@@ -1,4 +1,4 @@
-export { SECOND } from "https://deno.land/std@0.198.0/datetime/constants.ts";
+export { SECOND } from "https://deno.land/std@0.201.0/datetime/constants.ts";
 
 export const registryReg = /(?<=registry=).*/;
 

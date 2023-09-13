@@ -3,6 +3,6 @@
     "start": "deno run -A mod.ts",
     "install": "deno install --allow-read --allow-write --allow-env --allow-net -rfn dnrm mod.ts",
     "release-npm": "deno run -A --unstable release-npm.ts",
-    "release": "deno run --allow-read --allow-write --allow-env --allow-run https://deno.land/x/easy_std@v0.4.5/scripts/release.ts"
+    "release": "deno run --allow-read --allow-write --allow-env --allow-run https://deno.land/x/easy_std@v0.5.2/scripts/release.ts"
   }
 }

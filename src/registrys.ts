@@ -3,7 +3,7 @@ import {
   brightRed,
   gray,
   yellow,
-} from "https://deno.land/std@0.198.0/fmt/colors.ts";
+} from "https://deno.land/std@0.201.0/fmt/colors.ts";
 
 import { line, registryKeys, registrys, SECOND } from "./constant.ts";
 
@@ -35,7 +35,7 @@ export async function getRegistrysNetworkDelay(
 ) {
   // test is a low frequency event, so delay the import of the module
   const { deadline } = await import(
-    "https://deno.land/std@0.192.0/async/deadline.ts"
+    "https://deno.land/std@0.201.0/async/deadline.ts"
   );
 
   return Promise.all(registryKeys.map(getDelay));
