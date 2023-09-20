@@ -35,7 +35,7 @@ export async function action() {
           // append
           let newRegistryText = `registry=${url}`;
           if (!configText.endsWith(line)) {
-            newRegistryText = line + newConfigText;
+            newRegistryText = line + newRegistryText;
           }
           newConfigText = configText + newRegistryText;
         } else {
