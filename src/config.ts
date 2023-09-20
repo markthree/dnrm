@@ -1,6 +1,6 @@
 import { homedir } from "node:os";
 import { registryReg } from "./constant.ts";
-import { exists } from "https://deno.land/std@0.201.0/fs/exists.ts";
+import { exists } from "https://deno.land/std@0.202.0/fs/exists.ts";
 import { hotUrlRegistrys, registryKeys, registrys } from "./constant.ts";
 
 async function getConfigPath(local?: boolean) {
