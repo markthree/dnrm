@@ -48,7 +48,7 @@ await build({
     const mod = "./npm/esm/mod.js";
     let modText = await Deno.readTextFile(mod);
 
-    modText = shebang(cleanModuleMetadata(modText));
+    modText = shebang(modText);
 
     await Promise.all(
       [
@@ -66,13 +66,6 @@ await build({
     });
   },
 });
-
-function cleanModuleMetadata(text: string) {
-  return text.replace(
-    /if.*\(import.meta.main\).*{([\w\W]*)}/,
-    "$1",
-  )!;
-}
 
 function shebang(text: string) {
   return `#!/usr/bin/env node\n${text}`;
