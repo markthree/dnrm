@@ -1,14 +1,22 @@
 import { version } from "./src/version.ts";
+import * as esbuild from "https://deno.land/x/esbuild@v0.19.2/mod.js";
 import { build, emptyDir } from "https://deno.land/x/dnt@0.38.1/mod.ts";
 import { execa } from "https://deno.land/x/easy_std@v0.5.2/src/process.ts";
+import {
+  dirname,
+  fromFileUrl,
+  resolve,
+} from "https://deno.land/std@0.204.0/path/mod.ts";
 
-await emptyDir("./npm");
+const npm = resolve(dirname(fromFileUrl(import.meta.url)), "npm");
+
+await emptyDir(npm);
 
 await build({
-  outDir: "./npm",
+  outDir: npm,
   typeCheck: false,
-  scriptModule: false,
   declaration: false,
+  scriptModule: "cjs",
   entryPoints: ["./mod.ts"],
   compilerOptions: {
     target: "ES2019",
@@ -17,13 +25,13 @@ await build({
     deno: true,
   },
   test: false,
+  esModule: false,
   package: {
-    type: "module",
+    version,
     name: "deno-nrm",
-    version: version,
     bin: {
-      dnrm: "esm/mod.js",
-      "deno-nrm": "esm/mod.js",
+      dnrm: "dist/mod.js",
+      "deno-nrm": "dist/mod.js",
     },
     description: "deno 实现的 nrm，每次切换源都在 100ms 内，速度超级快",
     license: "MIT",
@@ -32,7 +40,7 @@ await build({
       url: "git+https://github.com/markthree/dnrm.git",
     },
     files: [
-      "esm",
+      "dist",
     ],
     author: {
       name: "markthree",
@@ -45,28 +53,72 @@ await build({
     },
   },
   async postBuild() {
-    const mod = "./npm/esm/mod.js";
-    let modText = await Deno.readTextFile(mod);
-
-    modText = shebang(modText);
-
+    await sanitiseDeps();
     await Promise.all(
       [
-        Deno.copyFile("LICENSE", "npm/LICENSE"),
-        Deno.copyFile("README.md", "npm/README.md"),
-        Deno.copyFile(".npmrc", "npm/.npmrc"),
-        Deno.writeTextFile(mod, modText),
+        shebang(resolve(npm, "script/mod.js")),
+        Deno.copyFile(".npmrc", resolve(npm, ".npmrc")),
+        Deno.copyFile("LICENSE", resolve(npm, "LICENSE")),
+        Deno.copyFile("README.md", resolve(npm, "README.md")),
       ],
     );
-
-    await execa(["deno", "fmt", mod]);
-
-    await execa(["npm", "publish"], {
-      cwd: "./npm",
-    });
+    await bundle();
+    await npmPublish();
   },
 });
 
-function shebang(text: string) {
-  return `#!/usr/bin/env node\n${text}`;
+async function shebang(mod: string) {
+  const code = await Deno.readTextFile(mod);
+  await Deno.writeTextFile(mod, `#!/usr/bin/env node\n${code}`);
+}
+
+async function sanitiseDeps() {
+  const packageJsonPath = resolve(npm, "package.json");
+  const packageJsonText = await Deno.readTextFile(packageJsonPath);
+
+  const packageJson = JSON.parse(packageJsonText) ?? {};
+  for (const key in packageJson) {
+    if (key === "dependencies") {
+      const dependencies = packageJson[key];
+      if (packageJson["devDependencies"]) {
+        packageJson["devDependencies"] = Object.assign(
+          packageJson["devDependencies"],
+          dependencies,
+        );
+      }
+      delete packageJson[key];
+      break;
+    }
+  }
+
+  await Deno.writeTextFile(
+    packageJsonPath,
+    JSON.stringify(packageJson, null, 2),
+  );
+
+  await execa(["npm", "install"], {
+    cwd: npm,
+  });
+}
+
+async function bundle() {
+  await esbuild.build({
+    bundle: true,
+    format: "cjs",
+    minify: true,
+    target: "ES2019",
+    platform: "node",
+    sourcemap: false,
+    treeShaking: true,
+    absWorkingDir: npm,
+    outfile: "./dist/mod.js",
+    entryPoints: ["./script/mod.js"],
+  });
+  esbuild.stop();
+}
+
+async function npmPublish() {
+  await execa(["npm", "publish"], {
+    cwd: npm,
+  });
 }
