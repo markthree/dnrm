@@ -1,12 +1,12 @@
 import { version } from "./src/version.ts";
-import * as esbuild from "https://deno.land/x/esbuild@v0.19.2/mod.js";
+import * as esbuild from "https://deno.land/x/esbuild@v0.19.4/mod.js";
 import { build, emptyDir } from "https://deno.land/x/dnt@0.38.1/mod.ts";
-import { execa } from "https://deno.land/x/easy_std@v0.5.2/src/process.ts";
+import { execa } from "https://deno.land/x/easy_std@v0.5.3/src/process.ts";
 import {
   dirname,
   fromFileUrl,
   resolve,
-} from "https://deno.land/std@0.204.0/path/mod.ts";
+} from "https://deno.land/std@0.205.0/path/mod.ts";
 
 const npm = resolve(dirname(fromFileUrl(import.meta.url)), "npm");
 

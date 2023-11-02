@@ -3,7 +3,7 @@ import {
   brightRed,
   gray,
   yellow,
-} from "https://deno.land/std@0.204.0/fmt/colors.ts";
+} from "https://deno.land/std@0.205.0/fmt/colors.ts";
 
 import { line, registryKeys, registrys, SECOND } from "./constant.ts";
 
