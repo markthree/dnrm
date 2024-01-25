@@ -1,6 +1,5 @@
 import { getConfig } from "./src/config.ts";
 import {
-  printListRegistrys,
   printListRegistrysWithNetworkDelay,
   printRegistry,
 } from "./src/registrys.ts";
@@ -14,12 +13,6 @@ async function runMain() {
   if (args.length === 0) {
     const { configRegistry } = await getConfig();
     printRegistry(configRegistry);
-    Deno.exit(0);
-  }
-
-  if (args[0] === "ls") {
-    const { configRegistry } = await getConfig();
-    printListRegistrys(configRegistry);
     Deno.exit(0);
   }
 

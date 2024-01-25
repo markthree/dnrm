@@ -9,7 +9,7 @@ import { line, registryKeys, registrys, SECOND } from "./constant.ts";
 
 export function listRegistrys(
   configRegistry: string,
-  format?: (v: string) => string,
+  format?: (v: string, isSelected?: boolean) => string,
 ) {
   const hasFormat = typeof format === "function";
 
@@ -23,10 +23,11 @@ export function listRegistrys(
 
   function selector(k: string) {
     const v = registrys[k];
-    const text = configRegistry === k
+    const isSelected = configRegistry === k;
+    const text = isSelected
       ? `${brightGreen(`${k} → ${v}`)}`
       : `${k}${gray(` → ${v}`)}`;
-    return hasFormat ? format(text) : text;
+    return hasFormat ? format(text, isSelected) : text;
   }
 }
 
@@ -53,7 +54,15 @@ export async function getRegistrysNetworkDelay(ms = 2 * SECOND) {
   }
 }
 
-export function printListRegistrys(registry: string) {
+export function printListRegistrys(registry: string, global = false) {
+  if (global) {
+    console.log(
+      listRegistrys(registry, (text, isSelected) => {
+        return isSelected ? `${text} ${gray("(global)")}` : text;
+      }),
+    );
+    return;
+  }
   console.log(listRegistrys(registry));
 }
 

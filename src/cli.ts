@@ -9,6 +9,14 @@ import { version } from "./version.ts";
 export async function action() {
   const optionalRegistry = new EnumType(registryKeys);
 
+  const ls = new Command()
+    .description(`列出源`).option("-g, --global", `全局`).action(
+      async ({ global }) => {
+        const { configRegistry } = await getConfig(!global);
+        printListRegistrys(configRegistry, global);
+      },
+    );
+
   const use = new Command()
     .description(`使用源`)
     .usage(`[${registryKeys.join("|")}]`)
@@ -48,7 +56,7 @@ export async function action() {
         if (newConfigText) {
           await Deno.writeTextFile(configPath, newConfigText);
         }
-        printListRegistrys(newRegistry);
+        printListRegistrys(newRegistry, global);
       },
     );
 
@@ -57,7 +65,7 @@ export async function action() {
     .name("dnrm")
     .version(version)
     .description("deno 实现的 nrm，每次切换源都在 100ms 内，速度超级快")
-    .command("ls", "列出源")
+    .command("ls", ls)
     .command("test", "测试源")
     .command("use", use)
     .parse(Deno.args);
