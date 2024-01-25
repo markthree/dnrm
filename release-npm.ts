@@ -111,6 +111,7 @@ async function bundle() {
     sourcemap: false,
     treeShaking: true,
     absWorkingDir: npm,
+    legalComments: "none",
     outfile: "./dist/mod.js",
     entryPoints: ["./script/mod.js"],
   });
