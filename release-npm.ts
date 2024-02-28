@@ -64,7 +64,7 @@ await build({
     );
     await bundle();
 
-    // await npmPublish();
+    await npmPublish();
   },
 });
 
