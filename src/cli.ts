@@ -12,7 +12,9 @@ export async function action() {
   const ls = new Command()
     .description(`列出源`).option("-g, --global", `全局`).action(
       async ({ global }) => {
-        const { configRegistry } = await getConfig(!global);
+        const { configRegistry } = await getConfig(
+          global === undefined ? undefined : !global,
+        );
         printListRegistrys(configRegistry, global);
       },
     );
