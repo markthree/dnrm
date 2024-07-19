@@ -25,7 +25,7 @@
 #### 1. Module Installation
 
 ```shell
-deno install --allow-read --allow-write --allow-env --allow-net -rfn dnrm https://deno.land/x/dnrm/mod.ts
+deno install --allow-read --allow-sys --allow-write --allow-env --allow-net -rfn dnrm https://deno.land/x/dnrm/mod.ts
 ```
 
 If you have [node](https://nodejs.org) installed but have not installed
