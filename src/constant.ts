@@ -22,6 +22,9 @@ export const registrys: Registrys = {
   npm: "https://registry.npmjs.org/",
   yarn: "https://registry.yarnpkg.com/",
   github: "https://npm.pkg.github.com/",
+  get cnpm() {
+    return this.taobao;
+  },
   taobao: "https://registry.npmmirror.com/",
   npmMirror: "https://skimdb.npmjs.com/registry/",
   tencent: "https://mirrors.cloud.tencent.com/npm/",
