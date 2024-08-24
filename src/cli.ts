@@ -1,5 +1,5 @@
-import { EnumType } from "https://deno.land/x/cliffy@v1.0.0-rc.3/command/types/enum.ts";
-import { Command } from "https://deno.land/x/cliffy@v1.0.0-rc.3/command/command.ts";
+import { EnumType } from "https://deno.land/x/cliffy@v1.0.0-rc.4/command/types/enum.ts";
+import { Command } from "https://deno.land/x/cliffy@v1.0.0-rc.4/command/command.ts";
 
 import { line, registryKeys, registryReg, registrys } from "./constant.ts";
 import { getConfig } from "./config.ts";
