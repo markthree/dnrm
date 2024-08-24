@@ -1,6 +1,6 @@
 import { version } from "./src/version.ts";
 import * as esbuild from "https://deno.land/x/esbuild@v0.19.4/mod.js";
-import { build, emptyDir } from "https://deno.land/x/dnt@0.38.1/mod.ts";
+import { build, emptyDir } from "https://deno.land/x/dnt@0.40.0/mod.ts";
 import { execa } from "https://deno.land/x/easy_std@v0.5.3/src/process.ts";
 import {
   dirname,
