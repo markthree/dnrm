@@ -5,18 +5,42 @@ import { hotUrlRegistrys, registryKeys, registrys } from "./constant.ts";
 
 async function getConfigPath(local?: boolean) {
   const rc = ".npmrc";
-  const detectLocal = local === undefined &&
-    (await exists(rc, { isFile: true }));
-  if (local || detectLocal) {
+
+  if (local === true) {
     return rc;
   }
-  return `${homedir().replaceAll("\\", "/")}/${rc}`;
+
+  const hasLocalRc = await exists(rc, { isFile: true });
+
+  if (!hasLocalRc) {
+    return getHomeDirRc();
+  }
+
+  const hasLocalRcRegistry = await Deno.readTextFile(rc).then((text) => {
+    return text.includes("registry");
+  });
+
+  if (hasLocalRcRegistry) {
+    return rc;
+  }
+
+  return getHomeDirRc();
+
+  function getHomeDirRc() {
+    return `${homedir().replaceAll("\\", "/")}/${rc}`;
+  }
 }
 
 export function getConfigRegistry(configText: string) {
   const [url = ""] = registryReg.exec(configText) || [];
-  return hotUrlRegistrys[url] ??
-    registryKeys.find((k) => registrys[k] === url);
+
+  const hotUrlRegistry = hotUrlRegistrys[url];
+
+  if (hotUrlRegistry) {
+    return hotUrlRegistry;
+  }
+
+  return registryKeys.find((k) => registrys[k] === url);
 }
 
 export async function getConfig(local?: boolean) {
